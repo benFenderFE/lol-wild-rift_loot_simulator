@@ -1,14 +1,9 @@
 import React from "react";
-import type { CurrencyState } from "../types/loot";
 import {
   Sparkles,
-  Key,
-  Diamond,
   Volume2,
   VolumeX,
   HelpCircle,
-  Plus,
-  Coins,
   ChevronLeft,
   RotateCcw,
   Layers,
@@ -19,10 +14,8 @@ import {
 import { soundEngine } from "../utils/audio";
 
 interface NavbarProps {
-  currencies: CurrencyState;
   activeView: "loot" | "stats" | "workshop" | "store";
   onSelectView: (view: "loot" | "stats" | "workshop" | "store") => void;
-  onAddCurrency: () => void;
   onOpenRates: () => void;
   isMuted: boolean;
   onToggleMute: () => void;
@@ -30,10 +23,8 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  currencies,
   activeView,
   onSelectView,
-  onAddCurrency,
   onOpenRates,
   isMuted,
   onToggleMute,
@@ -41,9 +32,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   return (
     <header className="w-full bg-slate-950/95 border-b border-amber-500/30 sticky top-0 z-40 backdrop-blur-md shadow-2xl">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-3">
-        {/* Left: Store Title & Stellar Bonds Badge (Directly matching in-game Wild Rift screenshot) */}
-        <div className="flex items-center gap-3">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-3">
+        {/* Left: Store Title & Stellar Bonds Badge */}
+        <div className="flex items-center gap-2.5">
           {/* Back Arrow */}
           <button
             onClick={() => {
@@ -53,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="p-1 rounded-lg text-amber-400 hover:text-white hover:bg-slate-800 transition-colors"
             title="Return to Main Store"
           >
-            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
 
           {/* STORE Title with Question Mark */}
@@ -146,53 +137,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </nav>
 
-        {/* Right: Currency Balance Bar & Controls (Matching Screenshot Format) */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          {/* Orange Gemstones */}
-          <div className="flex items-center gap-1.5 bg-amber-950/40 px-2 sm:px-2.5 py-1 rounded-lg border border-amber-500/40 text-xs shadow-inner">
-            <Diamond className="w-3.5 h-3.5 text-amber-400" />
-            <span className="font-black text-amber-400 font-mono">
-              {currencies.orangeGemstones.toLocaleString()}
-            </span>
+        {/* Right: Free Rolls Status Badge, Reset All & Audio Controls */}
+        <div className="flex items-center gap-2">
+          {/* Free Rolls Mode Badge */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-wider shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Unlimited Free Rolls</span>
           </div>
 
-          {/* Hextech Keys */}
-          <div
-            className="flex items-center gap-1.5 bg-slate-900/90 px-2 sm:px-2.5 py-1 rounded-lg border border-slate-800 text-xs shadow-inner cursor-pointer hover:border-amber-500/40 transition-colors"
-            onClick={onAddCurrency}
-            title="Refill Keys"
-          >
-            <Key className="w-3.5 h-3.5 text-amber-300" />
-            <span className="font-extrabold text-amber-300 font-mono">
-              {currencies.hextechKeys.toLocaleString()}
-            </span>
-            <Plus className="w-3 h-3 text-amber-400 hover:scale-125 transition-transform" />
-          </div>
-
-          {/* Wild Cores / Coins */}
-          <div
-            className="flex items-center gap-1.5 bg-slate-900/90 px-2 sm:px-2.5 py-1 rounded-lg border border-slate-800 text-xs shadow-inner cursor-pointer hover:border-amber-500/40 transition-colors"
-            onClick={onAddCurrency}
-            title="Refill Wild Cores"
-          >
-            <Coins className="w-3.5 h-3.5 text-amber-400" />
-            <span className="font-extrabold text-slate-200 font-mono">
-              {currencies.wildCores.toLocaleString()}
-            </span>
-            <Plus className="w-3 h-3 text-amber-400 hover:scale-125 transition-transform" />
-          </div>
-
-          {/* Reset Stats Shortcut Button in Navbar */}
+          {/* Reset All Shortcut Button */}
           {onResetStats && (
             <button
               onClick={() => {
                 soundEngine.playClick();
                 onResetStats();
               }}
-              className="p-1.5 rounded-lg bg-slate-900 hover:bg-red-950/50 text-slate-400 hover:text-red-300 border border-slate-800 hover:border-red-500/40 transition-colors"
-              title="Reset All Stats"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-red-950/60 text-slate-300 hover:text-red-300 border border-slate-800 hover:border-red-500/40 transition-colors text-xs font-bold"
+              title="Reset All Stats & Workshop"
             >
               <RotateCcw className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Reset All</span>
             </button>
           )}
 
