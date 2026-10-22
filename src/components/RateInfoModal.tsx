@@ -1,14 +1,17 @@
 import React from "react";
 import { X, Info, Sparkles, Diamond, ShieldCheck } from "lucide-react";
+import type { Language } from "../utils/i18n";
 
 interface RateInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
+  lang?: Language;
 }
 
 export const RateInfoModal: React.FC<RateInfoModalProps> = ({
   isOpen,
   onClose,
+  lang = "th",
 }) => {
   if (!isOpen) return null;
 
@@ -20,7 +23,9 @@ export const RateInfoModal: React.FC<RateInfoModalProps> = ({
           <div className="flex items-center gap-2">
             <Info className="w-5 h-5 text-amber-400" />
             <h3 className="text-lg font-bold text-slate-100 uppercase tracking-wider">
-              Hextech Crafting Loot Rules & Drop Rates
+              {lang === "th"
+                ? "กติกาการสุ่มและอัตราดรอป (PRESTIGE SELECT)"
+                : "Loot Rules & Drop Rates (PRESTIGE SELECT)"}
             </h3>
           </div>
           <button
@@ -37,14 +42,28 @@ export const RateInfoModal: React.FC<RateInfoModalProps> = ({
           <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
             <h4 className="font-bold text-amber-300 text-sm mb-1 flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              1. Hextech Chest Overview
+              {lang === "th"
+                ? "1. ภาพรวมตู้สุ่ม PRESTIGE SELECT"
+                : "1. Prestige Select Overview"}
             </h4>
             <p>
-              Each Hextech Chest costs{" "}
-              <strong>10 Hextech Keys (150 Wild Cores)</strong>. Opening a chest
-              yields two independent drops simultaneously:
-              <strong> Skin Content</strong> (Permanent Skin or Skin Shard) and
-              a bundle of <strong>Orange Gemstones</strong>.
+              {lang === "th" ? (
+                <>
+                  ตู้สุ่มจำลองฟรีไม่จำกัด (Unlimited Free Sandbox) การันตีสกินระดับ{" "}
+                  <strong>Mythic / Prestige พิเศษในรอบ 100 สุ่ม</strong> (Pity
+                  System) การเปิด 1 กล่องจะได้รับ 2 รางวัลพร้อมกันเสมอ:
+                  <strong> ของรางวัลสกิน</strong> (สกินถาวรหรือเศษสกิน) และถุง
+                  <strong> อัญมณีสีส้ม (Orange Gemstones)</strong>
+                </>
+              ) : (
+                <>
+                  Unlimited Free Sandbox simulator. Guaranteed featured{" "}
+                  <strong>Mythic / Prestige skin at pull #100</strong>. Opening a
+                  chest yields two simultaneous drops:
+                  <strong> Skin Content</strong> (Permanent Skin or Shard) and
+                  a bundle of <strong>Orange Gemstones</strong>.
+                </>
+              )}
             </p>
           </div>
 
@@ -142,7 +161,7 @@ export const RateInfoModal: React.FC<RateInfoModalProps> = ({
             onClick={onClose}
             className="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold uppercase transition-all shadow-md"
           >
-            Understood
+            {lang === "th" ? "เข้าใจแล้ว" : "Understood"}
           </button>
         </div>
       </div>

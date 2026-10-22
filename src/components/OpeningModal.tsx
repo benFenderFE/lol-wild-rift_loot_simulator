@@ -16,11 +16,14 @@ import {
   Layers,
 } from "lucide-react";
 
+import { type Language, translations } from "../utils/i18n";
+
 interface OpeningModalProps {
   isOpen: boolean;
   drops: DropResult[];
   onClose: () => void;
   onOpenAgain: (count: number) => void;
+  lang?: Language;
 }
 
 type FilterCategory =
@@ -37,7 +40,9 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
   drops,
   onClose,
   onOpenAgain,
+  lang = "th",
 }) => {
+  const t = translations[lang] || translations.th;
   const [selectedFilter, setSelectedFilter] = useState<FilterCategory>("all");
 
   const hasJackpot =
@@ -143,7 +148,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
           <div className="w-full mb-3 py-1.5 px-3 rounded-lg bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-center tracking-widest uppercase flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.6)] animate-pulse shrink-0">
             <Trophy className="w-5 h-5 text-slate-950" />
             <span className="text-xs sm:text-sm">
-              JACKPOT! 1,000 ORANGE GEMSTONES WON! (0.10% CHANCE)
+              {t.jackpotBanner}
             </span>
             <Trophy className="w-5 h-5 text-slate-950" />
           </div>
@@ -153,13 +158,15 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
         <div className="text-center mb-2 shrink-0">
           <div className="inline-flex items-center gap-1.5 text-[10px] text-amber-300 font-bold uppercase tracking-widest bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/30 mb-0.5">
             <Sparkles className="w-3 h-3" />
-            <span>Hextech Crafting Unlocked</span>
+            <span>{t.prestigeSelect}</span>
           </div>
           <h2 className="text-lg sm:text-2xl font-black text-slate-100 tracking-wider font-cinzel">
-            REWARDS ACQUIRED
+            {t.rewardsTitle}
           </h2>
           <p className="text-[11px] text-slate-400">
-            You opened {drops.length} {drops.length === 1 ? "chest" : "chests"}
+            {lang === "th"
+              ? `เปิดไปทั้งหมด ${drops.length} กล่อง`
+              : `You opened ${drops.length} ${drops.length === 1 ? "chest" : "chests"}`}
           </p>
         </div>
 
@@ -167,7 +174,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
         <div className="w-full flex items-center justify-center gap-1.5 flex-wrap py-2 border-y border-slate-800/80 mb-2 shrink-0">
           <span className="text-[10px] text-slate-400 uppercase font-bold flex items-center gap-1 mr-1 hidden sm:flex">
             <Filter className="w-3 h-3 text-amber-400" />
-            Filter:
+            {t.bannerCategory}
           </span>
 
           <button
@@ -181,7 +188,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
                 : "bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700"
             }`}
           >
-            All ({drops.length})
+            {t.filterAll} ({drops.length})
           </button>
 
           <button
@@ -196,7 +203,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
             }`}
           >
             <Crown className="w-3 h-3" />
-            <span>Permanent ({permanentCount})</span>
+            <span>{t.filterPermanent} ({permanentCount})</span>
           </button>
 
           <button
@@ -211,7 +218,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
             }`}
           >
             <Layers className="w-3 h-3" />
-            <span>Shards ({shardCount})</span>
+            <span>{t.filterShards} ({shardCount})</span>
           </button>
 
           <button
@@ -226,7 +233,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
             }`}
           >
             <Diamond className="w-3 h-3" />
-            <span>Gemstones ({gemstoneDropsCount})</span>
+            <span>{t.filterGemstones} ({gemstoneDropsCount})</span>
           </button>
 
           {mythicCount > 0 && (
@@ -242,7 +249,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
               }`}
             >
               <Sparkles className="w-3 h-3" />
-              <span>Mythic/Prestige ({mythicCount})</span>
+              <span>{t.filterPrestige} ({mythicCount})</span>
             </button>
           )}
 
@@ -259,7 +266,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
               }`}
             >
               <Flame className="w-3 h-3" />
-              <span>Legendary ({legendaryCount})</span>
+              <span>{t.filterLegendary} ({legendaryCount})</span>
             </button>
           )}
 
@@ -346,7 +353,11 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
             className="flex items-center gap-1.5 px-5 py-2 rounded-lg font-bold tracking-wider text-xs uppercase bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/40 hover:border-amber-400 transition-all hover:scale-105 active:scale-95 shadow-md"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Open Again ({drops.length}x)</span>
+            <span>
+              {lang === "th"
+                ? `สุ่มอีกครั้ง (${drops.length}x)`
+                : `Open Again (${drops.length}x)`}
+            </span>
           </button>
 
           <button
@@ -357,7 +368,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
             className="flex items-center gap-1.5 px-7 py-2 rounded-lg font-extrabold tracking-wider text-xs uppercase bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 text-slate-950 transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.4)] border-t border-amber-200"
           >
             <Check className="w-3.5 h-3.5" />
-            <span>Confirm & Collect</span>
+            <span>{t.collectRewards}</span>
           </button>
         </div>
       </div>
