@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { BannerType, GachaStats } from "../types/loot";
 import { soundEngine } from "../utils/audio";
+import { type Language, translations } from "../utils/i18n";
 
 interface HextechChestProps {
   banner: BannerType;
@@ -27,6 +28,7 @@ interface HextechChestProps {
   onResetStats?: () => void;
   onNavigateView?: (view: "loot" | "stats" | "workshop" | "store") => void;
   onOpenRates?: () => void;
+  lang?: Language;
 }
 
 export const HextechChest3D: React.FC<HextechChestProps> = ({
@@ -39,7 +41,9 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
   onResetStats,
   onNavigateView,
   onOpenRates,
+  lang = "th",
 }) => {
+  const t = translations[lang] || translations.th;
   const [viewMode, setViewMode] = useState<"stage" | "chest">("stage");
   const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
 
@@ -55,11 +59,9 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
   };
 
   const bannerTitle =
-    banner === "event_mythic"
-      ? "PRESTIGE SELECT SHOWCASE"
-      : banner === "poro"
-        ? "PORO ENERGY TREASURE"
-        : "STELLAR BONDS HEXTECH SHOWCASE";
+    banner === "event_mythic" || banner === "hextech"
+      ? t.bannerTitle
+      : t.bannerTitle;
 
   return (
     <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center select-none">
@@ -75,28 +77,28 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
           <div className="hidden sm:flex items-center gap-2.5 text-slate-300 text-[10px] sm:text-[11px] font-semibold border-l border-slate-700 pl-3">
             <span className="text-emerald-400 font-bold flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Free Sandbox
+              {t.freeSandbox}
             </span>
             <span>
-              Opened:{" "}
+              {t.opened}:{" "}
               <strong className="text-amber-400 font-mono">
                 {stats?.totalChestsOpened.toLocaleString() ?? 0}
               </strong>
             </span>
             <span>
-              Gemstones:{" "}
+              {t.gemstones}:{" "}
               <strong className="text-amber-400 font-mono">
                 {stats?.orangeGemstonesTotal.toLocaleString() ?? 0}
               </strong>
             </span>
             <span>
-              1k Jackpot:{" "}
+              {t.jackpot}:{" "}
               <strong className="text-yellow-300 font-bold font-mono">
                 {stats?.jackpotCount ?? 0}
               </strong>
             </span>
             <span>
-              Luck:{" "}
+              {t.luck}:{" "}
               <strong className="text-cyan-300 font-mono">
                 {stats?.luckRating.toFixed(1) ?? "100.0"}%
               </strong>
@@ -113,17 +115,17 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
               setViewMode(viewMode === "stage" ? "chest" : "stage");
             }}
             className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-300 text-[11px] font-semibold border border-slate-700 transition-colors"
-            title="Toggle between in-game Stage Showcase and 3D Chest model"
+            title="Toggle between Stage Showcase and 3D Chest"
           >
             {viewMode === "stage" ? (
               <>
                 <Box className="w-3 h-3 text-amber-400" />
-                <span>3D Chest</span>
+                <span>{t.chest3D}</span>
               </>
             ) : (
               <>
                 <Eye className="w-3 h-3 text-cyan-400" />
-                <span>Stage Showcase</span>
+                <span>{t.stageShowcase}</span>
               </>
             )}
           </button>
@@ -135,10 +137,10 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
               setShowResetConfirm(true);
             }}
             className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-950/70 hover:bg-red-900 text-red-300 hover:text-white border border-red-500/40 text-[11px] font-bold transition-all shadow-sm active:scale-95"
-            title="Reset all stats, workshop inventory, skins, shards, and progress"
+            title={t.resetAll}
           >
             <RotateCcw className="w-3 h-3" />
-            <span>Reset All (Workshop & Stats)</span>
+            <span>{t.resetAll}</span>
           </button>
         </div>
       </div>
@@ -152,12 +154,10 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider font-cinzel">
-                Reset All Data & Workshop?
+                {t.resetModalTitle}
               </h3>
               <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
-                This will completely wipe <strong>all statistics</strong>,{" "}
-                <strong>all permanent skins and skin shards in Workshop</strong>,
-                reset your currencies to default, and restart milestone progress.
+                {t.resetModalDesc}
               </p>
             </div>
             <div className="flex gap-2 pt-1">
@@ -165,13 +165,13 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
                 onClick={() => setShowResetConfirm(false)}
                 className="flex-1 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
               >
-                Cancel
+                {t.cancel}
               </button>
               <button
                 onClick={handleResetConfirm}
                 className="flex-1 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors shadow-lg shadow-red-600/30"
               >
-                Yes, Reset All
+                {t.resetConfirm}
               </button>
             </div>
           </div>
@@ -445,7 +445,7 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
             >
               <Key className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span className="font-cinzel whitespace-nowrap text-[11px] sm:text-xs">
-                10 OPEN 1 TIME(S)
+                {t.open1}
               </span>
             </button>
 
@@ -474,7 +474,7 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
             >
               <Key className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span className="font-cinzel whitespace-nowrap text-[11px] sm:text-xs">
-                50 OPEN 5 TIME(S)
+                {t.open5}
               </span>
             </button>
           </div>
@@ -489,14 +489,14 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
                 className="w-3.5 h-3.5 rounded border-amber-500/50 text-amber-500 bg-slate-900 focus:ring-0 cursor-pointer accent-amber-500"
               />
               <span className="text-[9px] sm:text-[10px] text-slate-300 font-bold uppercase tracking-wider font-cinzel">
-                SKIP REWARD ANIMATION
+                {t.skipAnimation}
               </span>
             </label>
 
             {/* High Volume Simulation buttons */}
             <div className="flex items-center gap-1">
               <span className="text-[9px] text-slate-400 font-semibold hidden sm:inline">
-                Sim:
+                {t.sim}:
               </span>
               <button
                 disabled={isOpening}

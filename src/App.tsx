@@ -24,7 +24,8 @@ import { InventoryWorkshop } from "./components/InventoryWorkshop";
 import { HextechStore } from "./components/HextechStore";
 import { RateInfoModal } from "./components/RateInfoModal";
 import { CurrencyModal } from "./components/CurrencyModal";
-import { Sparkles, Layers, Flame } from "lucide-react";
+import { Sparkles, Crown } from "lucide-react";
+import { type Language, translations } from "./utils/i18n";
 import {
   safeGetStorage,
   safeSetStorage,
@@ -40,7 +41,22 @@ export function App() {
   const [activeView, setActiveView] = useState<
     "loot" | "stats" | "workshop" | "store"
   >("loot");
-  const [banner, setBanner] = useState<BannerType>("hextech");
+  const [banner] = useState<BannerType>("event_mythic");
+  const [lang, setLang] = useState<Language>(() => {
+    const saved = safeGetStorage<Language>(
+      "wr_loot_lang",
+      (val) => (val === "en" || val === "th" ? val : "th"),
+      "th",
+    );
+    return saved;
+  });
+
+  const handleToggleLang = () => {
+    const nextLang = lang === "th" ? "en" : "th";
+    setLang(nextLang);
+    safeSetStorage("wr_loot_lang", nextLang);
+  };
+
   const [skipAnimation, setSkipAnimation] = useState<boolean>(false);
   const [isOpening, setIsOpening] = useState<boolean>(false);
   const [isOpeningModalOpen, setIsOpeningModalOpen] = useState<boolean>(false);
@@ -290,57 +306,32 @@ export function App() {
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
         onResetStats={handleResetAll}
+        lang={lang}
+        onToggleLang={handleToggleLang}
       />
 
       {/* Main Content Area (Laptop-friendly padding) */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-3 py-2 sm:py-3 flex flex-col items-center">
-        {/* Banner Selection Switcher (Only visible in 'loot' view) */}
+        {/* Banner Category (PRESTIGE SELECT Only) */}
         {activeView === "loot" && (
-          <div className="w-full max-w-lg flex items-center justify-center gap-1.5 mb-2.5 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
-            <button
-              onClick={() => {
-                soundEngine.playClick();
-                setBanner("hextech");
-              }}
-              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
-                banner === "hextech"
-                  ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.4)]"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Stellar Bonds (Hextech)</span>
-            </button>
-
-            <button
-              onClick={() => {
-                soundEngine.playClick();
-                setBanner("event_mythic");
-              }}
-              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
-                banner === "event_mythic"
-                  ? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-[0_0_12px_rgba(244,63,94,0.4)]"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <Flame className="w-3.5 h-3.5" />
-              <span>Prestige Select</span>
-            </button>
-
-            <button
-              onClick={() => {
-                soundEngine.playClick();
-                setBanner("poro");
-              }}
-              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
-                banner === "poro"
-                  ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.4)]"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Poro Energy</span>
-            </button>
+          <div className="w-full max-w-lg flex items-center justify-between mb-2.5 bg-gradient-to-r from-amber-950/80 via-slate-900/90 to-amber-950/80 px-4 py-2 rounded-xl border border-amber-500/40 shadow-md">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300">
+                <Crown className="w-4 h-4 text-amber-400" />
+              </div>
+              <div className="text-left">
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                  {translations[lang].bannerCategory}
+                </span>
+                <span className="text-xs sm:text-sm font-black text-amber-300 tracking-wider font-cinzel">
+                  {translations[lang].prestigeSelect}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider">
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              <span>100 PITY</span>
+            </div>
           </div>
         )}
 
@@ -357,18 +348,17 @@ export function App() {
               onResetStats={handleResetAll}
               onNavigateView={setActiveView}
               onOpenRates={() => setIsRateModalOpen(true)}
+              lang={lang}
             />
 
-            {/* Milestone Tracker (For Hextech Banner) */}
-            {banner === "hextech" && (
-              <div className="w-full max-w-5xl mt-1">
-                <MilestoneTracker
-                  currentChests={stats.totalChestsOpened}
-                  milestones={milestones}
-                  onClaimMilestone={handleClaimMilestone}
-                />
-              </div>
-            )}
+            {/* Milestone Tracker (Always accessible) */}
+            <div className="w-full max-w-5xl mt-1">
+              <MilestoneTracker
+                currentChests={stats.totalChestsOpened}
+                milestones={milestones}
+                onClaimMilestone={handleClaimMilestone}
+              />
+            </div>
           </div>
         )}
 
@@ -414,12 +404,14 @@ export function App() {
           setIsOpeningModalOpen(false);
           handleOpenChests(count);
         }}
+        lang={lang}
       />
 
       {/* Rate Info Modal */}
       <RateInfoModal
         isOpen={isRateModalOpen}
         onClose={() => setIsRateModalOpen(false)}
+        lang={lang}
       />
 
       {/* Currency Refill Modal */}
