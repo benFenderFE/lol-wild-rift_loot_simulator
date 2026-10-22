@@ -25,6 +25,15 @@ import { HextechStore } from "./components/HextechStore";
 import { RateInfoModal } from "./components/RateInfoModal";
 import { CurrencyModal } from "./components/CurrencyModal";
 import { Sparkles, Layers, Flame } from "lucide-react";
+import {
+  safeGetStorage,
+  safeSetStorage,
+  sanitizeCurrencies,
+  sanitizeMilestones,
+  sanitizeSkinList,
+  sanitizeStats,
+  DEFAULT_CURRENCIES,
+} from "./utils/storageSecurity";
 
 export function App() {
   // Navigation & UI state
@@ -40,103 +49,61 @@ export function App() {
     useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
 
-  // Player currencies
-  const [currencies, setCurrencies] = useState<CurrencyState>(() => {
-    const saved = localStorage.getItem("wr_loot_currencies");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return {
-      wildCores: 15000,
-      hextechKeys: 100,
-      orangeGemstones: 28,
-      silverStardust: 650,
-      poroCoins: 1200,
-      poroEnergy: 1800,
-    };
-  });
+  // Player currencies (safely validated and sanitized)
+  const [currencies, setCurrencies] = useState<CurrencyState>(() =>
+    safeGetStorage("wr_loot_currencies", sanitizeCurrencies, DEFAULT_CURRENCIES)
+  );
 
   // Milestones
-  const [milestones, setMilestones] = useState<MilestoneReward[]>(() => {
-    const saved = localStorage.getItem("wr_loot_milestones");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return INITIAL_MILESTONES;
-  });
+  const [milestones, setMilestones] = useState<MilestoneReward[]>(() =>
+    safeGetStorage(
+      "wr_loot_milestones",
+      (val) => sanitizeMilestones(val, INITIAL_MILESTONES),
+      INITIAL_MILESTONES
+    )
+  );
 
   // Collection
-  const [permanentSkins, setPermanentSkins] = useState<SkinItem[]>(() => {
-    const saved = localStorage.getItem("wr_loot_permanent_skins");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return [];
-  });
+  const [permanentSkins, setPermanentSkins] = useState<SkinItem[]>(() =>
+    safeGetStorage("wr_loot_permanent_skins", sanitizeSkinList, [])
+  );
 
-  const [skinShards, setSkinShards] = useState<SkinItem[]>(() => {
-    const saved = localStorage.getItem("wr_loot_skin_shards");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return [];
-  });
+  const [skinShards, setSkinShards] = useState<SkinItem[]>(() =>
+    safeGetStorage("wr_loot_skin_shards", sanitizeSkinList, [])
+  );
 
   // Statistics
-  const [stats, setStats] = useState<GachaStats>(() => {
-    const saved = localStorage.getItem("wr_loot_stats");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return INITIAL_STATS;
-  });
+  const [stats, setStats] = useState<GachaStats>(() =>
+    safeGetStorage(
+      "wr_loot_stats",
+      (val) => sanitizeStats(val, INITIAL_STATS),
+      INITIAL_STATS
+    )
+  );
 
   // Recent drops for modal
   const [currentDrops, setCurrentDrops] = useState<DropResult[]>([]);
   const [eventPity, setEventPity] = useState<number>(0);
 
-  // Save changes to localStorage
+  // Save changes to localStorage with error/quota catching
   useEffect(() => {
-    localStorage.setItem("wr_loot_currencies", JSON.stringify(currencies));
+    safeSetStorage("wr_loot_currencies", currencies);
   }, [currencies]);
 
   useEffect(() => {
-    localStorage.setItem("wr_loot_milestones", JSON.stringify(milestones));
+    safeSetStorage("wr_loot_milestones", milestones);
   }, [milestones]);
 
   useEffect(() => {
-    localStorage.setItem(
-      "wr_loot_permanent_skins",
-      JSON.stringify(permanentSkins),
-    );
+    safeSetStorage("wr_loot_permanent_skins", permanentSkins);
   }, [permanentSkins]);
 
   useEffect(() => {
-    localStorage.setItem("wr_loot_skin_shards", JSON.stringify(skinShards));
+    safeSetStorage("wr_loot_skin_shards", skinShards);
   }, [skinShards]);
 
   useEffect(() => {
-    localStorage.setItem("wr_loot_stats", JSON.stringify(stats));
+    safeSetStorage("wr_loot_stats", stats);
   }, [stats]);
 
   const handleToggleMute = () => {

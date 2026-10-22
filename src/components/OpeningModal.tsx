@@ -18,18 +18,16 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
   onClose,
   onOpenAgain,
 }) => {
-  if (!isOpen || drops.length === 0) return null;
-
-  const totalOrangeGems = drops.reduce((sum, d) => sum + d.orangeGemstones, 0);
-  const permanentCount = drops.filter((d) => d.isPermanent).length;
-  const hasJackpot = drops.some(
+  const hasJackpot = isOpen && drops.some(
     (d) => d.isJackpot || d.orangeGemstones === 1000,
   );
-  const hasMythic = drops.some(
+  const hasMythic = isOpen && drops.some(
     (d) => d.skin.rarity === "mythic" || d.skin.rarity === "prestige",
   );
 
   useEffect(() => {
+    if (!isOpen || drops.length === 0) return;
+
     if (hasJackpot) {
       soundEngine.playJackpot();
       // Grand golden confetti blast
@@ -50,7 +48,12 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
     } else {
       soundEngine.playChestBurst();
     }
-  }, [hasJackpot, hasMythic]);
+  }, [isOpen, drops.length, hasJackpot, hasMythic]);
+
+  if (!isOpen || drops.length === 0) return null;
+
+  const totalOrangeGems = drops.reduce((sum, d) => sum + d.orangeGemstones, 0);
+  const permanentCount = drops.filter((d) => d.isPermanent).length;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-lg animate-fade-in overflow-y-auto">
