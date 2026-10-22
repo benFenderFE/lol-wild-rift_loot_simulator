@@ -19,8 +19,8 @@ interface HextechChestProps {
   banner: BannerType;
   isOpening: boolean;
   onOpen: (count: number) => void;
-  canAfford: boolean;
-  keysCount: number;
+  canAfford?: boolean;
+  keysCount?: number;
   skipAnimation: boolean;
   onToggleSkip: (val: boolean) => void;
   stats?: GachaStats;
@@ -33,8 +33,6 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
   banner,
   isOpening,
   onOpen,
-  canAfford,
-  keysCount,
   skipAnimation,
   onToggleSkip,
   stats,
@@ -75,11 +73,9 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
             </span>
           </div>
           <div className="hidden sm:flex items-center gap-2.5 text-slate-300 text-[10px] sm:text-[11px] font-semibold border-l border-slate-700 pl-3">
-            <span>
-              Keys:{" "}
-              <strong className="text-amber-300 font-mono">
-                {keysCount.toLocaleString()}
-              </strong>
+            <span className="text-emerald-400 font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Free Sandbox
             </span>
             <span>
               Opened:{" "}
@@ -443,7 +439,7 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
           <div className="relative flex items-center justify-center gap-1 sm:gap-2.5 bg-slate-950/90 border-2 border-amber-500/60 rounded-full p-1 sm:p-1.5 shadow-[0_0_25px_rgba(0,0,0,0.9)] max-w-xl w-full">
             {/* Left Button: 10 OPEN 1 TIME(S) */}
             <button
-              disabled={isOpening || !canAfford}
+              disabled={isOpening}
               onClick={() => onOpen(1)}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-3 sm:px-5 rounded-full font-black tracking-widest text-xs uppercase transition-all duration-200 bg-gradient-to-r from-amber-950/80 via-amber-900/60 to-slate-900/90 hover:from-amber-600 hover:to-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 hover:border-amber-300 shadow-md active:scale-95 disabled:opacity-50"
             >
@@ -472,7 +468,7 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
 
             {/* Right Button: 50 OPEN 5 TIME(S) */}
             <button
-              disabled={isOpening || !canAfford}
+              disabled={isOpening}
               onClick={() => onOpen(5)}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-3 sm:px-5 rounded-full font-black tracking-widest text-xs uppercase transition-all duration-200 bg-gradient-to-r from-slate-900/90 via-amber-900/60 to-amber-950/80 hover:from-amber-500 hover:to-amber-600 text-amber-300 hover:text-slate-950 border border-amber-500/40 hover:border-amber-300 shadow-md active:scale-95 disabled:opacity-50"
             >

@@ -112,39 +112,9 @@ export function App() {
     soundEngine.setMuted(nextMuted);
   };
 
-  // Open chest logic
+  // Open chest logic (Unlimited Free Sandbox)
   const handleOpenChests = (count: number) => {
     if (isOpening) return;
-
-    // Currency check
-    let requiredKeys = 0;
-    let requiredWc = 0;
-
-    if (banner === "hextech") {
-      requiredKeys = count * 10;
-      // Auto-convert Wild Cores if not enough keys: 10 keys = 150 WC (15 WC each)
-      if (currencies.hextechKeys < requiredKeys) {
-        const missingKeys = requiredKeys - currencies.hextechKeys;
-        const missingCostWc = missingKeys * 15;
-        if (currencies.wildCores < missingCostWc) {
-          alert(
-            `Not enough Hextech Keys or Wild Cores! You need ${missingCostWc} Wild Cores for ${missingKeys} keys.`,
-          );
-          setIsCurrencyModalOpen(true);
-          return;
-        }
-        // Deduct WC for missing keys
-        requiredWc = missingCostWc;
-        requiredKeys = currencies.hextechKeys; // use up available keys
-      }
-    } else if (banner === "event_mythic") {
-      requiredWc = count * 100;
-      if (currencies.wildCores < requiredWc) {
-        alert(`Not enough Wild Cores! You need ${requiredWc} Wild Cores.`);
-        setIsCurrencyModalOpen(true);
-        return;
-      }
-    }
 
     const executeRolls = () => {
       const { drops, newPity } = openMultipleChests(count, banner, eventPity);
@@ -164,11 +134,9 @@ export function App() {
         }
       });
 
-      // Update wallets
+      // Accumulate Orange Gemstones from drops for Store redemption
       setCurrencies((prev) => ({
         ...prev,
-        wildCores: Math.max(0, prev.wildCores - requiredWc),
-        hextechKeys: Math.max(0, prev.hextechKeys - requiredKeys),
         orangeGemstones: prev.orangeGemstones + totalGemsGained,
       }));
 
@@ -316,10 +284,8 @@ export function App() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
       {/* Top Navigation */}
       <Navbar
-        currencies={currencies}
         activeView={activeView}
         onSelectView={setActiveView}
-        onAddCurrency={() => setIsCurrencyModalOpen(true)}
         onOpenRates={() => setIsRateModalOpen(true)}
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
@@ -385,8 +351,6 @@ export function App() {
               banner={banner}
               isOpening={isOpening}
               onOpen={handleOpenChests}
-              canAfford={true}
-              keysCount={currencies.hextechKeys}
               skipAnimation={skipAnimation}
               onToggleSkip={setSkipAnimation}
               stats={stats}
