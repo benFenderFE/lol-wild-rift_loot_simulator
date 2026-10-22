@@ -2,8 +2,59 @@ import type { SkinItem, StoreItem } from "../types/loot";
 
 export const ALL_SKINS: SkinItem[] = [
   // ==========================================
-  // --- PRESTIGE & MYTHIC (Wild Rift 2026) ---
+  // --- STELLAR BONDS & PRESTIGE (Wild Rift) ---
   // ==========================================
+  {
+    id: "mf-prestige-battle-bunny",
+    champion: "Miss Fortune",
+    skinName: "Prestige Select Battle Bunny Miss Fortune",
+    rarity: "prestige",
+    costStardust: 1500,
+    disenchantYield: 600,
+    accentColor: "#06b6d4",
+    badgeLabel: "PRESTIGE SELECT",
+    quote: "Bunnies hop, guns pop. The Anima Squad is locking down the sector!",
+    imageUrl:
+      "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/MissFortune_33.jpg",
+    splashUrl:
+      "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/MissFortune_33.jpg",
+    patchVersion: "Patch 2026",
+    role: "Marksman",
+  },
+  {
+    id: "ashe-high-noon-mythic",
+    champion: "Ashe",
+    skinName: "High Noon Ashe Mythic Chroma",
+    rarity: "mythic",
+    costStardust: 1200,
+    disenchantYield: 500,
+    accentColor: "#f472b6",
+    badgeLabel: "MYTHIC CHROMA",
+    quote: "A righteous arrow fired into the crimson prairie dust.",
+    imageUrl:
+      "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Ashe_17.jpg",
+    splashUrl:
+      "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ashe_17.jpg",
+    patchVersion: "Patch 2026",
+    role: "Marksman",
+  },
+  {
+    id: "talon-prestige-stargazer",
+    champion: "Talon",
+    skinName: "Prestige Stargazer Talon",
+    rarity: "prestige",
+    costStardust: 1500,
+    disenchantYield: 600,
+    accentColor: "#fbbf24",
+    badgeLabel: "PRESTIGE",
+    quote: "Constellations align; the blade strikes silently from the cosmos.",
+    imageUrl:
+      "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Talon_20.jpg",
+    splashUrl:
+      "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Talon_20.jpg",
+    patchVersion: "Patch 2026",
+    role: "Assassin",
+  },
   {
     id: "yone-prestige-high-noon",
     champion: "Yone",

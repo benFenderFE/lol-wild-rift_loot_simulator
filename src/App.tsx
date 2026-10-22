@@ -310,13 +310,14 @@ export function App() {
         onOpenRates={() => setIsRateModalOpen(true)}
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
+        onResetStats={handleResetStats}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col items-center">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col items-center">
         {/* Banner Selection Switcher (Only visible in 'loot' view) */}
         {activeView === "loot" && (
-          <div className="w-full max-w-2xl flex items-center justify-center gap-2 mb-6 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+          <div className="w-full max-w-xl flex items-center justify-center gap-2 mb-4 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
             <button
               onClick={() => {
                 soundEngine.playClick();
@@ -329,7 +330,7 @@ export function App() {
               }`}
             >
               <Sparkles className="w-4 h-4" />
-              <span>Hextech Chest</span>
+              <span>Stellar Bonds (Hextech)</span>
             </button>
 
             <button
@@ -344,7 +345,7 @@ export function App() {
               }`}
             >
               <Flame className="w-4 h-4" />
-              <span>Prestige 2026 Gacha</span>
+              <span>Prestige Select</span>
             </button>
 
             <button
@@ -359,14 +360,14 @@ export function App() {
               }`}
             >
               <Layers className="w-4 h-4" />
-              <span>Poro Chest</span>
+              <span>Poro Energy</span>
             </button>
           </div>
         )}
 
         {/* View 1: Loot Chest Centerpiece */}
         {activeView === "loot" && (
-          <div className="w-full flex flex-col items-center gap-8">
+          <div className="w-full flex flex-col items-center gap-6">
             <HextechChest3D
               banner={banner}
               isOpening={isOpening}
@@ -375,6 +376,10 @@ export function App() {
               keysCount={currencies.hextechKeys}
               skipAnimation={skipAnimation}
               onToggleSkip={setSkipAnimation}
+              stats={stats}
+              onResetStats={handleResetStats}
+              onNavigateView={setActiveView}
+              onOpenRates={() => setIsRateModalOpen(true)}
             />
 
             {/* Milestone Tracker (For Hextech Banner) */}
