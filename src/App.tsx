@@ -25,6 +25,15 @@ import { HextechStore } from "./components/HextechStore";
 import { RateInfoModal } from "./components/RateInfoModal";
 import { CurrencyModal } from "./components/CurrencyModal";
 import { Sparkles, Layers, Flame } from "lucide-react";
+import {
+  safeGetStorage,
+  safeSetStorage,
+  sanitizeCurrencies,
+  sanitizeMilestones,
+  sanitizeSkinList,
+  sanitizeStats,
+  DEFAULT_CURRENCIES,
+} from "./utils/storageSecurity";
 
 export function App() {
   // Navigation & UI state
@@ -40,103 +49,61 @@ export function App() {
     useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
 
-  // Player currencies
-  const [currencies, setCurrencies] = useState<CurrencyState>(() => {
-    const saved = localStorage.getItem("wr_loot_currencies");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return {
-      wildCores: 15000,
-      hextechKeys: 100,
-      orangeGemstones: 28,
-      silverStardust: 650,
-      poroCoins: 1200,
-      poroEnergy: 1800,
-    };
-  });
+  // Player currencies (safely validated and sanitized)
+  const [currencies, setCurrencies] = useState<CurrencyState>(() =>
+    safeGetStorage("wr_loot_currencies", sanitizeCurrencies, DEFAULT_CURRENCIES)
+  );
 
   // Milestones
-  const [milestones, setMilestones] = useState<MilestoneReward[]>(() => {
-    const saved = localStorage.getItem("wr_loot_milestones");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return INITIAL_MILESTONES;
-  });
+  const [milestones, setMilestones] = useState<MilestoneReward[]>(() =>
+    safeGetStorage(
+      "wr_loot_milestones",
+      (val) => sanitizeMilestones(val, INITIAL_MILESTONES),
+      INITIAL_MILESTONES
+    )
+  );
 
   // Collection
-  const [permanentSkins, setPermanentSkins] = useState<SkinItem[]>(() => {
-    const saved = localStorage.getItem("wr_loot_permanent_skins");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return [];
-  });
+  const [permanentSkins, setPermanentSkins] = useState<SkinItem[]>(() =>
+    safeGetStorage("wr_loot_permanent_skins", sanitizeSkinList, [])
+  );
 
-  const [skinShards, setSkinShards] = useState<SkinItem[]>(() => {
-    const saved = localStorage.getItem("wr_loot_skin_shards");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return [];
-  });
+  const [skinShards, setSkinShards] = useState<SkinItem[]>(() =>
+    safeGetStorage("wr_loot_skin_shards", sanitizeSkinList, [])
+  );
 
   // Statistics
-  const [stats, setStats] = useState<GachaStats>(() => {
-    const saved = localStorage.getItem("wr_loot_stats");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return INITIAL_STATS;
-  });
+  const [stats, setStats] = useState<GachaStats>(() =>
+    safeGetStorage(
+      "wr_loot_stats",
+      (val) => sanitizeStats(val, INITIAL_STATS),
+      INITIAL_STATS
+    )
+  );
 
   // Recent drops for modal
   const [currentDrops, setCurrentDrops] = useState<DropResult[]>([]);
   const [eventPity, setEventPity] = useState<number>(0);
 
-  // Save changes to localStorage
+  // Save changes to localStorage with error/quota catching
   useEffect(() => {
-    localStorage.setItem("wr_loot_currencies", JSON.stringify(currencies));
+    safeSetStorage("wr_loot_currencies", currencies);
   }, [currencies]);
 
   useEffect(() => {
-    localStorage.setItem("wr_loot_milestones", JSON.stringify(milestones));
+    safeSetStorage("wr_loot_milestones", milestones);
   }, [milestones]);
 
   useEffect(() => {
-    localStorage.setItem(
-      "wr_loot_permanent_skins",
-      JSON.stringify(permanentSkins),
-    );
+    safeSetStorage("wr_loot_permanent_skins", permanentSkins);
   }, [permanentSkins]);
 
   useEffect(() => {
-    localStorage.setItem("wr_loot_skin_shards", JSON.stringify(skinShards));
+    safeSetStorage("wr_loot_skin_shards", skinShards);
   }, [skinShards]);
 
   useEffect(() => {
-    localStorage.setItem("wr_loot_stats", JSON.stringify(stats));
+    safeSetStorage("wr_loot_stats", stats);
   }, [stats]);
 
   const handleToggleMute = () => {
@@ -327,9 +294,22 @@ export function App() {
     }));
   };
 
-  // Reset all stats
-  const handleResetStats = () => {
+  // Reset all stats, workshop inventory, skins, shards, currencies and milestones
+  const handleResetAll = () => {
+    soundEngine.playClick();
     setStats(INITIAL_STATS);
+    setPermanentSkins([]);
+    setSkinShards([]);
+    setCurrencies(DEFAULT_CURRENCIES);
+    setMilestones(INITIAL_MILESTONES);
+    setCurrentDrops([]);
+    setEventPity(0);
+
+    safeSetStorage("wr_loot_stats", INITIAL_STATS);
+    safeSetStorage("wr_loot_permanent_skins", []);
+    safeSetStorage("wr_loot_skin_shards", []);
+    safeSetStorage("wr_loot_currencies", DEFAULT_CURRENCIES);
+    safeSetStorage("wr_loot_milestones", INITIAL_MILESTONES);
   };
 
   return (
@@ -343,26 +323,27 @@ export function App() {
         onOpenRates={() => setIsRateModalOpen(true)}
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
+        onResetStats={handleResetAll}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col items-center">
+      {/* Main Content Area (Laptop-friendly padding) */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-3 py-2 sm:py-3 flex flex-col items-center">
         {/* Banner Selection Switcher (Only visible in 'loot' view) */}
         {activeView === "loot" && (
-          <div className="w-full max-w-2xl flex items-center justify-center gap-2 mb-6 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+          <div className="w-full max-w-lg flex items-center justify-center gap-1.5 mb-2.5 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
             <button
               onClick={() => {
                 soundEngine.playClick();
                 setBanner("hextech");
               }}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 banner === "hextech"
-                  ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+                  ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.4)]"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Hextech Chest</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Stellar Bonds (Hextech)</span>
             </button>
 
             <button
@@ -370,14 +351,14 @@ export function App() {
                 soundEngine.playClick();
                 setBanner("event_mythic");
               }}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 banner === "event_mythic"
-                  ? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]"
+                  ? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-[0_0_12px_rgba(244,63,94,0.4)]"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Flame className="w-4 h-4" />
-              <span>Prestige 2026 Gacha</span>
+              <Flame className="w-3.5 h-3.5" />
+              <span>Prestige Select</span>
             </button>
 
             <button
@@ -385,21 +366,21 @@ export function App() {
                 soundEngine.playClick();
                 setBanner("poro");
               }}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 banner === "poro"
-                  ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_15px_rgba(236,72,153,0.4)]"
+                  ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.4)]"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Layers className="w-4 h-4" />
-              <span>Poro Chest</span>
+              <Layers className="w-3.5 h-3.5" />
+              <span>Poro Energy</span>
             </button>
           </div>
         )}
 
         {/* View 1: Loot Chest Centerpiece */}
         {activeView === "loot" && (
-          <div className="w-full flex flex-col items-center gap-8">
+          <div className="w-full flex flex-col items-center gap-3">
             <HextechChest3D
               banner={banner}
               isOpening={isOpening}
@@ -408,11 +389,15 @@ export function App() {
               keysCount={currencies.hextechKeys}
               skipAnimation={skipAnimation}
               onToggleSkip={setSkipAnimation}
+              stats={stats}
+              onResetStats={handleResetAll}
+              onNavigateView={setActiveView}
+              onOpenRates={() => setIsRateModalOpen(true)}
             />
 
             {/* Milestone Tracker (For Hextech Banner) */}
             {banner === "hextech" && (
-              <div className="w-full max-w-4xl mt-4">
+              <div className="w-full max-w-5xl mt-1">
                 <MilestoneTracker
                   currentChests={stats.totalChestsOpened}
                   milestones={milestones}
@@ -426,7 +411,7 @@ export function App() {
         {/* View 2: Statistics & Data Collection Dashboard */}
         {activeView === "stats" && (
           <div className="w-full max-w-5xl">
-            <StatisticsPanel stats={stats} onResetStats={handleResetStats} />
+            <StatisticsPanel stats={stats} onResetStats={handleResetAll} />
           </div>
         )}
 

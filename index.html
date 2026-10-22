@@ -8,6 +8,8 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 95,28 95,72 50,95 5,72 5,28' fill='%230f172a' stroke='%23f59e0b' stroke-width='6'/><circle cx='50' cy='50' r='18' fill='%2306b6d4'/></svg>"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <title>Wild Rift Hextech Loot & Gacha Simulator (Latest Patch)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,6 +21,11 @@
   <body
     class="bg-slate-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-slate-950"
   >
+    <noscript>
+      <div style="padding: 20px; color: white; background: #0f172a; text-align: center; font-family: sans-serif;">
+        JavaScript is required to run the Wild Rift Hextech Simulator safely. Please enable JavaScript in your browser.
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -6,13 +6,15 @@ import {
   Diamond,
   Volume2,
   VolumeX,
-  Info,
+  HelpCircle,
   Plus,
   Coins,
-  Shield,
+  ChevronLeft,
+  RotateCcw,
   Layers,
   Store,
   BarChart2,
+  Shield,
 } from "lucide-react";
 import { soundEngine } from "../utils/audio";
 
@@ -24,6 +26,7 @@ interface NavbarProps {
   onOpenRates: () => void;
   isMuted: boolean;
   onToggleMute: () => void;
+  onResetStats?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -34,33 +37,53 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenRates,
   isMuted,
   onToggleMute,
+  onResetStats,
 }) => {
   return (
     <header className="w-full bg-slate-950/95 border-b border-amber-500/30 sticky top-0 z-40 backdrop-blur-md shadow-2xl">
-      <div className="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
-        {/* Left: Wild Rift Hextech Logo & Title */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-3">
+        {/* Left: Store Title & Stellar Bonds Badge (Directly matching in-game Wild Rift screenshot) */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 via-amber-600 to-amber-900 p-0.5 shadow-[0_0_15px_rgba(245,158,11,0.5)] flex items-center justify-center">
-            <div className="w-full h-full bg-slate-950 rounded-[7px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-amber-400" />
-            </div>
+          {/* Back Arrow */}
+          <button
+            onClick={() => {
+              soundEngine.playClick();
+              onSelectView("loot");
+            }}
+            className="p-1 rounded-lg text-amber-400 hover:text-white hover:bg-slate-800 transition-colors"
+            title="Return to Main Store"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* STORE Title with Question Mark */}
+          <div className="flex items-center gap-1.5">
+            <h1
+              onClick={() => onSelectView("loot")}
+              className="text-base sm:text-lg font-black tracking-widest text-slate-100 uppercase font-cinzel cursor-pointer hover:text-amber-300 transition-colors"
+            >
+              STORE
+            </h1>
+            <button
+              onClick={() => {
+                soundEngine.playClick();
+                onOpenRates();
+              }}
+              className="w-5 h-5 rounded-full border border-slate-600 hover:border-amber-400 flex items-center justify-center text-slate-400 hover:text-amber-300 transition-colors"
+              title="View Gacha Probabilities & Rules"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+            </button>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-sm sm:text-base font-black tracking-widest text-slate-100 uppercase">
-                WILD RIFT
-              </h1>
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 font-extrabold px-1.5 py-0.2 rounded border border-amber-500/40 uppercase">
-                Patch 2026
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-400 tracking-wider uppercase font-semibold">
-              Hextech Loot & Gacha Simulator
-            </p>
+
+          {/* Stellar Bonds Event Tag */}
+          <div className="hidden sm:flex items-center gap-1 px-2.5 py-0.5 rounded bg-slate-900/90 border border-amber-500/40 text-amber-300 text-[10px] tracking-wider uppercase font-extrabold shadow-sm">
+            <Sparkles className="w-3 h-3 text-amber-400" />
+            <span>Stellar Bonds</span>
           </div>
         </div>
 
-        {/* Center: Navigation Navigation Tabs */}
+        {/* Center: Quick Navigation Tabs */}
         <nav className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
           <button
             onClick={() => {
@@ -89,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <BarChart2 className="w-3.5 h-3.5" />
-            <span>Data & Luck</span>
+            <span>Stats</span>
           </button>
 
           <button
@@ -104,7 +127,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <Shield className="w-3.5 h-3.5" />
-            <span>Vault</span>
+            <span>Workshop</span>
           </button>
 
           <button
@@ -123,56 +146,55 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </nav>
 
-        {/* Right: Currency Balance Bar & Control Icons */}
-        <div className="flex items-center gap-2.5">
-          {/* Wild Cores */}
+        {/* Right: Currency Balance Bar & Controls (Matching Screenshot Format) */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Orange Gemstones */}
+          <div className="flex items-center gap-1.5 bg-amber-950/40 px-2 sm:px-2.5 py-1 rounded-lg border border-amber-500/40 text-xs shadow-inner">
+            <Diamond className="w-3.5 h-3.5 text-amber-400" />
+            <span className="font-black text-amber-400 font-mono">
+              {currencies.orangeGemstones.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Hextech Keys */}
           <div
-            className="flex items-center gap-1.5 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800 text-xs shadow-inner cursor-pointer hover:border-amber-500/40 transition-colors"
+            className="flex items-center gap-1.5 bg-slate-900/90 px-2 sm:px-2.5 py-1 rounded-lg border border-slate-800 text-xs shadow-inner cursor-pointer hover:border-amber-500/40 transition-colors"
             onClick={onAddCurrency}
-            title="Click to Refill / Add Sandbox Currencies"
+            title="Refill Keys"
+          >
+            <Key className="w-3.5 h-3.5 text-amber-300" />
+            <span className="font-extrabold text-amber-300 font-mono">
+              {currencies.hextechKeys.toLocaleString()}
+            </span>
+            <Plus className="w-3 h-3 text-amber-400 hover:scale-125 transition-transform" />
+          </div>
+
+          {/* Wild Cores / Coins */}
+          <div
+            className="flex items-center gap-1.5 bg-slate-900/90 px-2 sm:px-2.5 py-1 rounded-lg border border-slate-800 text-xs shadow-inner cursor-pointer hover:border-amber-500/40 transition-colors"
+            onClick={onAddCurrency}
+            title="Refill Wild Cores"
           >
             <Coins className="w-3.5 h-3.5 text-amber-400" />
-            <span className="font-extrabold text-slate-200">
+            <span className="font-extrabold text-slate-200 font-mono">
               {currencies.wildCores.toLocaleString()}
             </span>
             <Plus className="w-3 h-3 text-amber-400 hover:scale-125 transition-transform" />
           </div>
 
-          {/* Hextech Keys */}
-          <div className="flex items-center gap-1.5 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800 text-xs shadow-inner">
-            <Key className="w-3.5 h-3.5 text-amber-300" />
-            <span className="font-extrabold text-amber-300">
-              {currencies.hextechKeys.toLocaleString()}
-            </span>
-          </div>
-
-          {/* Orange Gemstones */}
-          <div className="flex items-center gap-1.5 bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-500/40 text-xs shadow-inner">
-            <Diamond className="w-3.5 h-3.5 text-amber-400" />
-            <span className="font-black text-amber-400">
-              {currencies.orangeGemstones.toLocaleString()}
-            </span>
-          </div>
-
-          {/* Silver Stardust */}
-          <div className="hidden sm:flex items-center gap-1.5 bg-sky-950/40 px-2.5 py-1 rounded-lg border border-sky-500/40 text-xs shadow-inner">
-            <Sparkles className="w-3.5 h-3.5 text-sky-300" />
-            <span className="font-extrabold text-sky-300">
-              {currencies.silverStardust.toLocaleString()}
-            </span>
-          </div>
-
-          {/* Rate Info Modal Trigger */}
-          <button
-            onClick={() => {
-              soundEngine.playClick();
-              onOpenRates();
-            }}
-            className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-amber-300 border border-slate-800 transition-colors"
-            title="Loot Drop Rates & Probabilities"
-          >
-            <Info className="w-4 h-4" />
-          </button>
+          {/* Reset Stats Shortcut Button in Navbar */}
+          {onResetStats && (
+            <button
+              onClick={() => {
+                soundEngine.playClick();
+                onResetStats();
+              }}
+              className="p-1.5 rounded-lg bg-slate-900 hover:bg-red-950/50 text-slate-400 hover:text-red-300 border border-slate-800 hover:border-red-500/40 transition-colors"
+              title="Reset All Stats"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          )}
 
           {/* Audio Mute/Unmute */}
           <button
