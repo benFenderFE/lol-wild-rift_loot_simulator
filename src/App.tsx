@@ -294,9 +294,22 @@ export function App() {
     }));
   };
 
-  // Reset all stats
-  const handleResetStats = () => {
+  // Reset all stats, workshop inventory, skins, shards, currencies and milestones
+  const handleResetAll = () => {
+    soundEngine.playClick();
     setStats(INITIAL_STATS);
+    setPermanentSkins([]);
+    setSkinShards([]);
+    setCurrencies(DEFAULT_CURRENCIES);
+    setMilestones(INITIAL_MILESTONES);
+    setCurrentDrops([]);
+    setEventPity(0);
+
+    safeSetStorage("wr_loot_stats", INITIAL_STATS);
+    safeSetStorage("wr_loot_permanent_skins", []);
+    safeSetStorage("wr_loot_skin_shards", []);
+    safeSetStorage("wr_loot_currencies", DEFAULT_CURRENCIES);
+    safeSetStorage("wr_loot_milestones", INITIAL_MILESTONES);
   };
 
   return (
@@ -310,26 +323,26 @@ export function App() {
         onOpenRates={() => setIsRateModalOpen(true)}
         isMuted={isMuted}
         onToggleMute={handleToggleMute}
-        onResetStats={handleResetStats}
+        onResetStats={handleResetAll}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col items-center">
+      {/* Main Content Area (Laptop-friendly padding) */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-3 py-2 sm:py-3 flex flex-col items-center">
         {/* Banner Selection Switcher (Only visible in 'loot' view) */}
         {activeView === "loot" && (
-          <div className="w-full max-w-xl flex items-center justify-center gap-2 mb-4 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+          <div className="w-full max-w-lg flex items-center justify-center gap-1.5 mb-2.5 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
             <button
               onClick={() => {
                 soundEngine.playClick();
                 setBanner("hextech");
               }}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 banner === "hextech"
-                  ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+                  ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-[0_0_12px_rgba(245,158,11,0.4)]"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-3.5 h-3.5" />
               <span>Stellar Bonds (Hextech)</span>
             </button>
 
@@ -338,13 +351,13 @@ export function App() {
                 soundEngine.playClick();
                 setBanner("event_mythic");
               }}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 banner === "event_mythic"
-                  ? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]"
+                  ? "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-[0_0_12px_rgba(244,63,94,0.4)]"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Flame className="w-4 h-4" />
+              <Flame className="w-3.5 h-3.5" />
               <span>Prestige Select</span>
             </button>
 
@@ -353,13 +366,13 @@ export function App() {
                 soundEngine.playClick();
                 setBanner("poro");
               }}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 banner === "poro"
-                  ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_15px_rgba(236,72,153,0.4)]"
+                  ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.4)]"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Layers className="w-4 h-4" />
+              <Layers className="w-3.5 h-3.5" />
               <span>Poro Energy</span>
             </button>
           </div>
@@ -367,7 +380,7 @@ export function App() {
 
         {/* View 1: Loot Chest Centerpiece */}
         {activeView === "loot" && (
-          <div className="w-full flex flex-col items-center gap-6">
+          <div className="w-full flex flex-col items-center gap-3">
             <HextechChest3D
               banner={banner}
               isOpening={isOpening}
@@ -377,14 +390,14 @@ export function App() {
               skipAnimation={skipAnimation}
               onToggleSkip={setSkipAnimation}
               stats={stats}
-              onResetStats={handleResetStats}
+              onResetStats={handleResetAll}
               onNavigateView={setActiveView}
               onOpenRates={() => setIsRateModalOpen(true)}
             />
 
             {/* Milestone Tracker (For Hextech Banner) */}
             {banner === "hextech" && (
-              <div className="w-full max-w-4xl mt-4">
+              <div className="w-full max-w-5xl mt-1">
                 <MilestoneTracker
                   currentChests={stats.totalChestsOpened}
                   milestones={milestones}
@@ -398,7 +411,7 @@ export function App() {
         {/* View 2: Statistics & Data Collection Dashboard */}
         {activeView === "stats" && (
           <div className="w-full max-w-5xl">
-            <StatisticsPanel stats={stats} onResetStats={handleResetStats} />
+            <StatisticsPanel stats={stats} onResetStats={handleResetAll} />
           </div>
         )}
 

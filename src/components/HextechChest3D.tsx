@@ -10,7 +10,7 @@ import {
   Check,
   ChevronRight,
   Puzzle,
-  AlertCircle,
+  AlertTriangle,
 } from "lucide-react";
 import type { BannerType, GachaStats } from "../types/loot";
 import { soundEngine } from "../utils/audio";
@@ -64,123 +64,126 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
         : "STELLAR BONDS HEXTECH SHOWCASE";
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto flex flex-col items-center select-none">
-      {/* Top Quick Stats HUD & Reset Button Banner */}
-      <div className="w-full flex flex-wrap items-center justify-between gap-3 px-4 py-2 bg-slate-900/90 border border-amber-500/30 rounded-xl mb-4 backdrop-blur-md shadow-lg">
-        <div className="flex flex-wrap items-center gap-4 text-xs">
+    <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center select-none">
+      {/* Top Quick Stats HUD & Reset Button Banner (Compact laptop sizing) */}
+      <div className="w-full flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 bg-slate-900/90 border border-amber-500/30 rounded-xl mb-2.5 backdrop-blur-md shadow-md text-xs">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1.5 text-amber-300 font-bold">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>{bannerTitle}</span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span className="font-cinzel text-[11px] sm:text-xs tracking-wider">
+              {bannerTitle}
+            </span>
           </div>
-          <div className="hidden sm:flex items-center gap-3 text-slate-300 text-[11px] font-semibold border-l border-slate-700 pl-4">
+          <div className="hidden sm:flex items-center gap-2.5 text-slate-300 text-[10px] sm:text-[11px] font-semibold border-l border-slate-700 pl-3">
             <span>
-              Keys Available:{" "}
-              <strong className="text-amber-300">
+              Keys:{" "}
+              <strong className="text-amber-300 font-mono">
                 {keysCount.toLocaleString()}
               </strong>
             </span>
             <span>
-              Total Chests:{" "}
-              <strong className="text-amber-400">
+              Opened:{" "}
+              <strong className="text-amber-400 font-mono">
                 {stats?.totalChestsOpened.toLocaleString() ?? 0}
               </strong>
             </span>
             <span>
-              Gemstones Hit:{" "}
-              <strong className="text-amber-400">
+              Gemstones:{" "}
+              <strong className="text-amber-400 font-mono">
                 {stats?.orangeGemstonesTotal.toLocaleString() ?? 0}
               </strong>
             </span>
             <span>
-              Jackpot 1,000 OG:{" "}
-              <strong className="text-yellow-300 font-bold">
+              1k Jackpot:{" "}
+              <strong className="text-yellow-300 font-bold font-mono">
                 {stats?.jackpotCount ?? 0}
               </strong>
             </span>
             <span>
               Luck:{" "}
-              <strong className="text-cyan-300">
+              <strong className="text-cyan-300 font-mono">
                 {stats?.luckRating.toFixed(1) ?? "100.0"}%
               </strong>
             </span>
           </div>
         </div>
 
-        {/* Home Page Reset Stats Button */}
-        <div className="flex items-center gap-2">
-          {/* View Mode Toggle: Authentic Stage vs 3D Chest Model */}
+        {/* Right Buttons: Toggle View & Reset Everything */}
+        <div className="flex items-center gap-1.5">
+          {/* View Mode Toggle */}
           <button
             onClick={() => {
               soundEngine.playClick();
               setViewMode(viewMode === "stage" ? "chest" : "stage");
             }}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-300 text-xs font-semibold border border-slate-700 transition-colors"
-            title="Toggle between in-game Stage Showcase and 3D Chest view"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-300 text-[11px] font-semibold border border-slate-700 transition-colors"
+            title="Toggle between in-game Stage Showcase and 3D Chest model"
           >
             {viewMode === "stage" ? (
               <>
-                <Box className="w-3.5 h-3.5 text-amber-400" />
-                <span>3D Chest View</span>
+                <Box className="w-3 h-3 text-amber-400" />
+                <span>3D Chest</span>
               </>
             ) : (
               <>
-                <Eye className="w-3.5 h-3.5 text-cyan-400" />
+                <Eye className="w-3 h-3 text-cyan-400" />
                 <span>Stage Showcase</span>
               </>
             )}
           </button>
 
-          {/* Reset All Stats Button */}
+          {/* Reset All Data & Workshop Button */}
           <button
             onClick={() => {
               soundEngine.playClick();
               setShowResetConfirm(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-950/70 hover:bg-red-900 text-red-300 hover:text-white border border-red-500/40 text-xs font-bold transition-all shadow-sm active:scale-95"
-            title="Reset all simulation statistics back to zero"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-950/70 hover:bg-red-900 text-red-300 hover:text-white border border-red-500/40 text-[11px] font-bold transition-all shadow-sm active:scale-95"
+            title="Reset all stats, workshop inventory, skins, shards, and progress"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Reset Statistics</span>
+            <RotateCcw className="w-3 h-3" />
+            <span>Reset All (Workshop & Stats)</span>
           </button>
         </div>
       </div>
 
-      {/* Confirmation Modal for Reset Stats */}
+      {/* Confirmation Modal for Reset Everything */}
       {showResetConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-sm bg-slate-900 border-2 border-red-500/50 rounded-2xl p-6 shadow-2xl text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400">
-              <AlertCircle className="w-6 h-6" />
+          <div className="relative w-full max-w-sm bg-slate-900 border-2 border-red-500/50 rounded-2xl p-5 shadow-2xl text-center space-y-3">
+            <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400">
+              <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-100 uppercase tracking-wider font-cinzel">
-                Reset All Statistics?
+              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider font-cinzel">
+                Reset All Data & Workshop?
               </h3>
-              <p className="text-xs text-slate-400 mt-2">
-                This will clear all total rolls, gemstones earned, drop history,
-                and luck rating. Your current currency balance will be kept.
+              <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                This will completely wipe <strong>all statistics</strong>,{" "}
+                <strong>all permanent skins and skin shards in Workshop</strong>,
+                reset your currencies to default, and restart milestone progress.
               </p>
             </div>
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-1">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="flex-1 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                className="flex-1 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleResetConfirm}
-                className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors shadow-lg shadow-red-600/30"
+                className="flex-1 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors shadow-lg shadow-red-600/30"
               >
-                Yes, Reset
+                Yes, Reset All
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Main Game Stage Container (Styled to match Wild Rift in-game screenshot) */}
-      <div className="relative w-full aspect-[16/9] min-h-[460px] sm:min-h-[540px] md:min-h-[620px] rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-[0_0_50px_rgba(0,0,0,0.9)] flex flex-col justify-between p-4 sm:p-6 bg-slate-950">
+      {/* Main Game Stage Container (Compact height for 13"-16" laptop screens) */}
+      <div className="relative w-full aspect-[16/8.2] min-h-[360px] sm:min-h-[400px] max-h-[460px] rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] flex flex-col justify-between p-3 sm:p-4 bg-slate-950">
         {/* Background Image: Authentic Cathedral Hextech Stage */}
         <div
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
@@ -193,31 +196,30 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-slate-950/70 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/60 pointer-events-none" />
 
-        {/* Left Floating Sidebar Navigation Cards (Exact replica of screenshot) */}
-        <div className="relative z-20 flex flex-col gap-3 max-w-[200px] sm:max-w-[240px] pt-2">
+        {/* Left Floating Sidebar Navigation Cards (Compact for Laptop Screen) */}
+        <div className="relative z-20 flex flex-col gap-2 max-w-[170px] sm:max-w-[200px]">
           {/* Card 1: EXCHANGE STORE */}
           <button
             onClick={() => {
               soundEngine.playClick();
               if (onNavigateView) onNavigateView("store");
             }}
-            className="group relative flex items-center gap-3 p-2 sm:p-2.5 rounded-xl bg-gradient-to-r from-slate-950/90 via-slate-900/90 to-amber-950/40 border border-amber-500/50 hover:border-amber-400 shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-300 text-left active:scale-95"
+            className="group relative flex items-center gap-2.5 p-2 rounded-xl bg-gradient-to-r from-slate-950/90 via-slate-900/90 to-amber-950/40 border border-amber-500/50 hover:border-amber-400 shadow-[0_4px_15px_rgba(0,0,0,0.6)] hover:shadow-[0_0_15px_rgba(245,158,11,0.4)] transition-all duration-300 text-left active:scale-95"
           >
-            {/* Glowing Golden Gemstone Icon */}
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 p-0.5 shadow-[0_0_15px_rgba(245,158,11,0.6)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-              <div className="w-full h-full bg-slate-950 rounded-[6px] flex items-center justify-center">
-                <Store className="w-5 h-5 text-amber-400" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 p-0.5 shadow-[0_0_12px_rgba(245,158,11,0.5)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-full h-full bg-slate-950 rounded-[5px] flex items-center justify-center">
+                <Store className="w-4 h-4 text-amber-400" />
               </div>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] sm:text-xs font-black tracking-wider text-amber-300 uppercase font-cinzel">
+                <span className="text-[10px] sm:text-[11px] font-black tracking-wider text-amber-300 uppercase font-cinzel">
                   EXCHANGE STORE
                 </span>
-                <ChevronRight className="w-4 h-4 text-amber-400/70 group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-3.5 h-3.5 text-amber-400/70 group-hover:translate-x-1 transition-transform" />
               </div>
-              <span className="text-[10px] text-slate-400 block truncate">
-                Redeem Skins with OG
+              <span className="text-[9px] text-slate-400 block truncate">
+                Redeem Skins
               </span>
             </div>
           </button>
@@ -228,39 +230,39 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
               soundEngine.playClick();
               if (onNavigateView) onNavigateView("workshop");
             }}
-            className="group relative flex items-center gap-3 p-2 sm:p-2.5 rounded-xl bg-gradient-to-r from-slate-950/90 via-slate-900/90 to-slate-900/40 border border-slate-700/80 hover:border-amber-500/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)] transition-all duration-300 text-left active:scale-95"
+            className="group relative flex items-center gap-2.5 p-2 rounded-xl bg-gradient-to-r from-slate-950/90 via-slate-900/90 to-slate-900/40 border border-slate-700/80 hover:border-amber-500/40 shadow-[0_4px_15px_rgba(0,0,0,0.6)] transition-all duration-300 text-left active:scale-95"
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-gradient-to-br from-amber-700 via-amber-900 to-slate-900 p-0.5 shadow-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform border border-amber-600/30">
-              <div className="w-full h-full bg-slate-950 rounded-[6px] flex items-center justify-center">
-                <Puzzle className="w-5 h-5 text-amber-400/90" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gradient-to-br from-amber-700 via-amber-900 to-slate-900 p-0.5 shadow-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform border border-amber-600/30">
+              <div className="w-full h-full bg-slate-950 rounded-[5px] flex items-center justify-center">
+                <Puzzle className="w-4 h-4 text-amber-400/90" />
               </div>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] sm:text-xs font-black tracking-wider text-slate-200 uppercase font-cinzel">
+                <span className="text-[10px] sm:text-[11px] font-black tracking-wider text-slate-200 uppercase font-cinzel">
                   SHARD WORKSHOP
                 </span>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
               </div>
-              <span className="text-[10px] text-slate-400 block truncate">
+              <span className="text-[9px] text-slate-400 block truncate">
                 Disenchant & Forge
               </span>
             </div>
           </button>
 
           {/* Bottom Left Announcement & Daily Limit */}
-          <div className="mt-auto space-y-1 pt-4 hidden sm:block">
+          <div className="mt-auto space-y-0.5 hidden sm:block">
             <button
               onClick={() => {
                 soundEngine.playClick();
                 if (onOpenRates) onOpenRates();
               }}
-              className="flex items-center gap-1.5 text-[10px] text-slate-300 hover:text-amber-300 transition-colors uppercase font-bold tracking-wider"
+              className="flex items-center gap-1.5 text-[9px] text-slate-300 hover:text-amber-300 transition-colors uppercase font-bold tracking-wider"
             >
-              <Shield className="w-3.5 h-3.5 text-cyan-400" />
+              <Shield className="w-3 h-3 text-cyan-400" />
               <span>CONTENT ANNOUNCEMENT</span>
             </button>
-            <div className="text-[10px] text-slate-400 font-semibold tracking-wide">
+            <div className="text-[9px] text-slate-400 font-semibold tracking-wide">
               Daily limit:{" "}
               <span className="text-slate-200">
                 {stats?.totalChestsOpened ?? 0}/200
@@ -269,35 +271,35 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
           </div>
         </div>
 
-        {/* Center Stage Character Floating Name Badges (From Screenshot) */}
+        {/* Center Stage Character Floating Name Badges */}
         {viewMode === "stage" ? (
-          <div className="relative z-10 w-full flex items-end justify-between px-2 sm:px-8 mb-4 pointer-events-none">
+          <div className="relative z-10 w-full flex items-end justify-between px-1 sm:px-6 mb-2 pointer-events-none">
             {/* Left Character: High Noon Ashe */}
-            <div className="text-center bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-500/30 shadow-[0_4px_20px_rgba(0,0,0,0.8)] pointer-events-auto hover:border-pink-400/60 transition-colors">
-              <span className="text-[10px] sm:text-xs font-bold text-slate-200 tracking-wide font-cinzel flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-pink-400 shadow-[0_0_8px_#f472b6]" />
+            <div className="text-center bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-500/30 shadow-[0_4px_15px_rgba(0,0,0,0.8)] pointer-events-auto hover:border-pink-400/60 transition-colors">
+              <span className="text-[9px] sm:text-[11px] font-bold text-slate-200 tracking-wide font-cinzel flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-pink-400 shadow-[0_0_6px_#f472b6]" />
                 High Noon Ashe Mythic Chroma
               </span>
             </div>
 
             {/* Center Featured: Prestige Battle Bunny Miss Fortune */}
-            <div className="text-center bg-slate-950/90 backdrop-blur-md px-4 py-2 rounded-full border-2 border-cyan-400/60 shadow-[0_0_25px_rgba(6,182,212,0.4)] pointer-events-auto hover:scale-105 transition-transform">
-              <span className="text-xs sm:text-sm font-black text-cyan-200 tracking-wider font-cinzel flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
+            <div className="text-center bg-slate-950/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border-2 border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.4)] pointer-events-auto hover:scale-105 transition-transform">
+              <span className="text-[11px] sm:text-xs font-black text-cyan-200 tracking-wider font-cinzel flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-300 animate-pulse" />
                 Prestige Select Battle Bunny Miss Fortune
               </span>
             </div>
 
             {/* Right Character: Prestige Stargazer Talon */}
-            <div className="text-center bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-500/30 shadow-[0_4px_20px_rgba(0,0,0,0.8)] pointer-events-auto hover:border-amber-400/60 transition-colors">
-              <span className="text-[10px] sm:text-xs font-bold text-slate-200 tracking-wide font-cinzel flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]" />
+            <div className="text-center bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-500/30 shadow-[0_4px_15px_rgba(0,0,0,0.8)] pointer-events-auto hover:border-amber-400/60 transition-colors">
+              <span className="text-[9px] sm:text-[11px] font-bold text-slate-200 tracking-wide font-cinzel flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]" />
                 Prestige Stargazer Talon
               </span>
             </div>
           </div>
         ) : (
-          /* Alternative 3D Interactive Chest Model View */
+          /* 3D Interactive Chest Model View */
           <div className="relative z-10 w-full flex flex-col items-center justify-center my-auto">
             <div
               className={`relative z-10 transition-transform duration-500 ease-out cursor-pointer ${
@@ -309,7 +311,7 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
             >
               <svg
                 viewBox="0 0 240 240"
-                className="w-48 h-48 sm:w-60 sm:h-60 drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]"
+                className="w-40 h-40 sm:w-52 sm:h-52 drop-shadow-[0_15px_25px_rgba(0,0,0,0.8)]"
               >
                 <defs>
                   <linearGradient
@@ -433,41 +435,38 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
                 </g>
               </svg>
             </div>
-            <p className="text-xs text-amber-300 font-semibold mt-2 tracking-wider uppercase font-cinzel">
-              Click chest or use buttons below to open
-            </p>
           </div>
         )}
 
-        {/* Bottom Gacha Console (Golden Beveled Piltover Console from Screenshot) */}
+        {/* Bottom Gacha Console (Golden Beveled Piltover Console) */}
         <div className="relative z-30 w-full flex flex-col items-center">
-          <div className="relative flex items-center justify-center gap-1 sm:gap-3 bg-slate-950/90 border-2 border-amber-500/60 rounded-full p-1.5 sm:p-2 shadow-[0_0_30px_rgba(0,0,0,0.9)] max-w-2xl w-full">
+          <div className="relative flex items-center justify-center gap-1 sm:gap-2.5 bg-slate-950/90 border-2 border-amber-500/60 rounded-full p-1 sm:p-1.5 shadow-[0_0_25px_rgba(0,0,0,0.9)] max-w-xl w-full">
             {/* Left Button: 10 OPEN 1 TIME(S) */}
             <button
               disabled={isOpening || !canAfford}
               onClick={() => onOpen(1)}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 px-3 sm:px-6 rounded-full font-black tracking-widest text-xs sm:text-sm uppercase transition-all duration-200 bg-gradient-to-r from-amber-950/80 via-amber-900/60 to-slate-900/90 hover:from-amber-600 hover:to-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 hover:border-amber-300 shadow-md active:scale-95 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-3 sm:px-5 rounded-full font-black tracking-widest text-xs uppercase transition-all duration-200 bg-gradient-to-r from-amber-950/80 via-amber-900/60 to-slate-900/90 hover:from-amber-600 hover:to-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 hover:border-amber-300 shadow-md active:scale-95 disabled:opacity-50"
             >
-              <Key className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="font-cinzel whitespace-nowrap">
+              <Key className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span className="font-cinzel whitespace-nowrap text-[11px] sm:text-xs">
                 10 OPEN 1 TIME(S)
               </span>
             </button>
 
             {/* Center Metallic Dial / Medallion */}
             <div
-              className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-300 via-amber-600 to-amber-950 p-1 shadow-[0_0_20px_rgba(245,158,11,0.6)] flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition-transform"
+              className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-amber-300 via-amber-600 to-amber-950 p-0.5 sm:p-1 shadow-[0_0_15px_rgba(245,158,11,0.6)] flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition-transform"
               onClick={() => !isOpening && onOpen(1)}
               title="Current 5-draw milestone cycle"
             >
               <div className="w-full h-full bg-slate-950 rounded-full flex flex-col items-center justify-center border border-amber-500/50">
-                <Key className="w-4 h-4 text-cyan-400" />
-                <span className="text-[10px] font-black text-amber-300 font-mono">
+                <Key className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="text-[9px] font-black text-amber-300 font-mono">
                   {rollsInCycle}/5
                 </span>
               </div>
-              <div className="absolute -bottom-2 w-5 h-5 rounded-full bg-slate-900 border border-amber-400 flex items-center justify-center">
-                <Check className="w-3 h-3 text-amber-400" />
+              <div className="absolute -bottom-1.5 w-4 h-4 rounded-full bg-slate-900 border border-amber-400 flex items-center justify-center">
+                <Check className="w-2.5 h-2.5 text-amber-400" />
               </div>
             </div>
 
@@ -475,52 +474,52 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
             <button
               disabled={isOpening || !canAfford}
               onClick={() => onOpen(5)}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 px-3 sm:px-6 rounded-full font-black tracking-widest text-xs sm:text-sm uppercase transition-all duration-200 bg-gradient-to-r from-slate-900/90 via-amber-900/60 to-amber-950/80 hover:from-amber-500 hover:to-amber-600 text-amber-300 hover:text-slate-950 border border-amber-500/40 hover:border-amber-300 shadow-md active:scale-95 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-3 sm:px-5 rounded-full font-black tracking-widest text-xs uppercase transition-all duration-200 bg-gradient-to-r from-slate-900/90 via-amber-900/60 to-amber-950/80 hover:from-amber-500 hover:to-amber-600 text-amber-300 hover:text-slate-950 border border-amber-500/40 hover:border-amber-300 shadow-md active:scale-95 disabled:opacity-50"
             >
-              <Key className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="font-cinzel whitespace-nowrap">
+              <Key className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span className="font-cinzel whitespace-nowrap text-[11px] sm:text-xs">
                 50 OPEN 5 TIME(S)
               </span>
             </button>
           </div>
 
           {/* Sub-bar: Skip Animation Checkbox & High Volume Simulators */}
-          <div className="w-full max-w-2xl flex items-center justify-between px-4 mt-2">
-            <label className="flex items-center gap-2 cursor-pointer select-none">
+          <div className="w-full max-w-xl flex items-center justify-between px-3 mt-1.5">
+            <label className="flex items-center gap-1.5 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={skipAnimation}
                 onChange={(e) => onToggleSkip(e.target.checked)}
-                className="w-4 h-4 rounded border-amber-500/50 text-amber-500 bg-slate-900 focus:ring-0 cursor-pointer accent-amber-500"
+                className="w-3.5 h-3.5 rounded border-amber-500/50 text-amber-500 bg-slate-900 focus:ring-0 cursor-pointer accent-amber-500"
               />
-              <span className="text-[10px] sm:text-xs text-slate-300 font-bold uppercase tracking-wider font-cinzel">
+              <span className="text-[9px] sm:text-[10px] text-slate-300 font-bold uppercase tracking-wider font-cinzel">
                 SKIP REWARD ANIMATION
               </span>
             </label>
 
             {/* High Volume Simulation buttons */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-slate-400 font-semibold hidden sm:inline">
-                Simulate:
+            <div className="flex items-center gap-1">
+              <span className="text-[9px] text-slate-400 font-semibold hidden sm:inline">
+                Sim:
               </span>
               <button
                 disabled={isOpening}
                 onClick={() => onOpen(10)}
-                className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-[10px] font-bold text-amber-300 border border-amber-500/30 transition-colors"
+                className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-[9px] sm:text-[10px] font-bold text-amber-300 border border-amber-500/30 transition-colors"
               >
                 10x
               </button>
               <button
                 disabled={isOpening}
                 onClick={() => onOpen(50)}
-                className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-[10px] font-bold text-amber-300 border border-amber-500/30 transition-colors"
+                className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-[9px] sm:text-[10px] font-bold text-amber-300 border border-amber-500/30 transition-colors"
               >
                 50x
               </button>
               <button
                 disabled={isOpening}
                 onClick={() => onOpen(100)}
-                className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-[10px] font-bold text-amber-300 border border-amber-500/30 transition-colors"
+                className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-[9px] sm:text-[10px] font-bold text-amber-300 border border-amber-500/30 transition-colors"
               >
                 100x
               </button>
