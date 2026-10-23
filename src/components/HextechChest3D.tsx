@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Sparkles,
   Key,
@@ -7,14 +7,16 @@ import {
   RotateCcw,
   Eye,
   Box,
-  Check,
   ChevronRight,
+  ChevronLeft,
+  Crown,
   Puzzle,
   AlertTriangle,
 } from "lucide-react";
 import type { BannerType, GachaStats } from "../types/loot";
 import { soundEngine } from "../utils/audio";
 import { type Language, translations } from "../utils/i18n";
+import { ALL_SKINS } from "../data/skins";
 
 interface HextechChestProps {
   banner: BannerType;
@@ -47,8 +49,23 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
   const [viewMode, setViewMode] = useState<"stage" | "chest">("stage");
   const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
 
-  // 5-roll cycle for the center dial
-  const rollsInCycle = stats ? stats.totalChestsOpened % 5 : 0;
+  // Prestige skins for the dynamic stage slideshow
+  const prestigeSkins = useMemo(
+    () => ALL_SKINS.filter((s) => s.rarity === "prestige"),
+    [],
+  );
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused || prestigeSkins.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % prestigeSkins.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [isPaused, prestigeSkins.length]);
+
+  const currentSkin = prestigeSkins[currentSlideIndex] || prestigeSkins[0];
 
   const handleResetConfirm = () => {
     soundEngine.playClick();
@@ -179,18 +196,38 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
       )}
 
       {/* Main Game Stage Container (Compact height for 13"-16" laptop screens) */}
-      <div className="relative w-full aspect-[16/8.2] min-h-[360px] sm:min-h-[400px] max-h-[460px] rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-[0_0_40px_rgba(0,0,0,0.8)] flex flex-col justify-between p-3 sm:p-4 bg-slate-950">
-        {/* Background Image: Authentic Cathedral Hextech Stage */}
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
-          style={{
-            backgroundImage: "url('/images/wild_rift_store_stage.jpg')",
-          }}
-        />
+      <div
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        className="relative w-full aspect-[16/8.2] min-h-[360px] sm:min-h-[410px] max-h-[470px] rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-[0_0_45px_rgba(0,0,0,0.85)] flex flex-col justify-between p-3 sm:p-4 bg-slate-950"
+      >
+        {/* Prestige Skins Splash Art Slideshow Background */}
+        <div className="absolute inset-0 overflow-hidden bg-slate-950">
+          {prestigeSkins.map((skin, idx) => (
+            <div
+              key={skin.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                idx === currentSlideIndex
+                  ? "opacity-100 z-0"
+                  : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <img
+                src={skin.splashUrl || skin.imageUrl}
+                alt={skin.skinName}
+                referrerPolicy="no-referrer"
+                loading={idx === 0 ? "eager" : "lazy"}
+                className={`w-full h-full object-cover object-[center_25%] transition-transform duration-[6000ms] ease-out ${
+                  idx === currentSlideIndex ? "scale-105" : "scale-100"
+                }`}
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Ambient Dark Gradient Vignette for UI Readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-slate-950/70 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/60 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-slate-950/70 pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-transparent to-slate-950/60 pointer-events-none z-10" />
 
         {/* Left Floating Sidebar Navigation Cards (Compact for Laptop Screen) */}
         <div className="relative z-20 flex flex-col gap-2 max-w-[170px] sm:max-w-[200px]">
@@ -267,31 +304,82 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
           </div>
         </div>
 
-        {/* Center Stage Character Floating Name Badges */}
+        {/* Center Stage: Prestige Skin Showcase Banner (Replaces AI character badges) */}
         {viewMode === "stage" ? (
-          <div className="relative z-10 w-full flex items-end justify-between px-1 sm:px-6 mb-2 pointer-events-none">
-            {/* Left Character: High Noon Ashe */}
-            <div className="text-center bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-500/30 shadow-[0_4px_15px_rgba(0,0,0,0.8)] pointer-events-auto hover:border-pink-400/60 transition-colors">
-              <span className="text-[9px] sm:text-[11px] font-bold text-slate-200 tracking-wide font-cinzel flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-pink-400 shadow-[0_0_6px_#f472b6]" />
-                High Noon Ashe Mythic Chroma
-              </span>
-            </div>
+          <div className="relative z-20 w-full flex flex-col items-center justify-end px-2 sm:px-6 mb-2">
+            <div className="flex flex-col items-center gap-1 max-w-xl text-center">
+              {/* Prev / Badge / Next Nav Bar */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    soundEngine.playClick();
+                    setCurrentSlideIndex(
+                      (prev) =>
+                        (prev - 1 + prestigeSkins.length) % prestigeSkins.length,
+                    );
+                  }}
+                  className="w-6 h-6 rounded-full bg-slate-950/80 hover:bg-amber-500 hover:text-slate-950 text-amber-300 border border-amber-500/40 flex items-center justify-center transition-all active:scale-90 shadow-md cursor-pointer"
+                  title="Previous Prestige Skin"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
 
-            {/* Center Featured: Prestige Battle Bunny Miss Fortune */}
-            <div className="text-center bg-slate-950/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border-2 border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.4)] pointer-events-auto hover:scale-105 transition-transform">
-              <span className="text-[11px] sm:text-xs font-black text-cyan-200 tracking-wider font-cinzel flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-300 animate-pulse" />
-                Prestige Select Battle Bunny Miss Fortune
-              </span>
-            </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-amber-400/60 shadow-[0_0_15px_rgba(251,191,36,0.35)] backdrop-blur-md">
+                  <Sparkles className="w-3 h-3 text-amber-400 animate-pulse" />
+                  <span className="text-[10px] font-black text-amber-300 tracking-widest uppercase font-cinzel">
+                    {currentSkin.badgeLabel || "PRESTIGE SELECT"}
+                  </span>
+                  <span className="text-[9px] text-slate-400 font-bold border-l border-amber-500/30 pl-1.5 font-mono">
+                    {currentSlideIndex + 1}/{prestigeSkins.length}
+                  </span>
+                </div>
 
-            {/* Right Character: Prestige Stargazer Talon */}
-            <div className="text-center bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-500/30 shadow-[0_4px_15px_rgba(0,0,0,0.8)] pointer-events-auto hover:border-amber-400/60 transition-colors">
-              <span className="text-[9px] sm:text-[11px] font-bold text-slate-200 tracking-wide font-cinzel flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]" />
-                Prestige Stargazer Talon
-              </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    soundEngine.playClick();
+                    setCurrentSlideIndex(
+                      (prev) => (prev + 1) % prestigeSkins.length,
+                    );
+                  }}
+                  className="w-6 h-6 rounded-full bg-slate-950/80 hover:bg-amber-500 hover:text-slate-950 text-amber-300 border border-amber-500/40 flex items-center justify-center transition-all active:scale-90 shadow-md cursor-pointer"
+                  title="Next Prestige Skin"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Skin Title */}
+              <h2 className="text-base sm:text-xl font-black text-slate-100 tracking-wider font-cinzel drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] bg-gradient-to-r from-amber-200 via-amber-300 to-yellow-200 bg-clip-text text-transparent">
+                {currentSkin.skinName}
+              </h2>
+
+              {/* Quote / Subtitle */}
+              {currentSkin.quote && (
+                <p className="text-[10px] sm:text-[11px] text-slate-300 italic line-clamp-1 max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                  "{currentSkin.quote}"
+                </p>
+              )}
+
+              {/* Progress Dots */}
+              <div className="flex items-center gap-1 mt-1">
+                {prestigeSkins.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    onClick={() => {
+                      soundEngine.playClick();
+                      setCurrentSlideIndex(dotIdx);
+                    }}
+                    className={`h-1 rounded-full transition-all duration-300 cursor-pointer ${
+                      dotIdx === currentSlideIndex
+                        ? "w-4 bg-amber-400 shadow-[0_0_8px_#fbbf24]"
+                        : "w-1 bg-white/30 hover:bg-white/60"
+                    }`}
+                    title={`Go to ${prestigeSkins[dotIdx]?.skinName}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         ) : (
@@ -453,16 +541,13 @@ export const HextechChest3D: React.FC<HextechChestProps> = ({
             <div
               className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-amber-300 via-amber-600 to-amber-950 p-0.5 sm:p-1 shadow-[0_0_15px_rgba(245,158,11,0.6)] flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition-transform"
               onClick={() => !isOpening && onOpen(1)}
-              title="Current 5-draw milestone cycle"
+              title="Open Hextech Chest"
             >
               <div className="w-full h-full bg-slate-950 rounded-full flex flex-col items-center justify-center border border-amber-500/50">
-                <Key className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="text-[9px] font-black text-amber-300 font-mono">
-                  {rollsInCycle}/5
+                <Crown className="w-4 h-4 text-amber-400 animate-pulse" />
+                <span className="text-[8px] font-black text-amber-300 uppercase tracking-widest font-cinzel">
+                  PRESTIGE
                 </span>
-              </div>
-              <div className="absolute -bottom-1.5 w-4 h-4 rounded-full bg-slate-900 border border-amber-400 flex items-center justify-center">
-                <Check className="w-2.5 h-2.5 text-amber-400" />
               </div>
             </div>
 

@@ -18,7 +18,6 @@ import { soundEngine } from "./utils/audio";
 import { Navbar } from "./components/Navbar";
 import { HextechChest3D } from "./components/HextechChest3D";
 import { OpeningModal } from "./components/OpeningModal";
-import { MilestoneTracker } from "./components/MilestoneTracker";
 import { StatisticsPanel } from "./components/StatisticsPanel";
 import { InventoryWorkshop } from "./components/InventoryWorkshop";
 import { HextechStore } from "./components/HextechStore";
@@ -181,34 +180,6 @@ export function App() {
     }
   };
 
-  // Claim milestone
-  const handleClaimMilestone = (index: number) => {
-    const target = milestones[index];
-    if (!target || target.claimed) return;
-
-    if (target.type === "keys") {
-      setCurrencies((prev) => ({
-        ...prev,
-        hextechKeys: prev.hextechKeys + target.amount,
-      }));
-    } else if (target.type === "stardust") {
-      setCurrencies((prev) => ({
-        ...prev,
-        silverStardust: prev.silverStardust + target.amount,
-      }));
-    } else if (target.type === "chest") {
-      // Award 1 free chest roll
-      setCurrencies((prev) => ({
-        ...prev,
-        hextechKeys: prev.hextechKeys + 10,
-      }));
-    }
-
-    setMilestones((prev) =>
-      prev.map((m, i) => (i === index ? { ...m, claimed: true } : m)),
-    );
-  };
-
   // Disenchant single shard
   const handleDisenchantShard = (shardId: string) => {
     const shardIndex = skinShards.findIndex((s) => s.id === shardId);
@@ -350,15 +321,6 @@ export function App() {
               onOpenRates={() => setIsRateModalOpen(true)}
               lang={lang}
             />
-
-            {/* Milestone Tracker (Always accessible) */}
-            <div className="w-full max-w-5xl mt-1">
-              <MilestoneTracker
-                currentChests={stats.totalChestsOpened}
-                milestones={milestones}
-                onClaimMilestone={handleClaimMilestone}
-              />
-            </div>
           </div>
         )}
 
