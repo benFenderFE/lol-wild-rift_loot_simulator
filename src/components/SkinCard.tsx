@@ -114,6 +114,7 @@ export const SkinCard: React.FC<SkinCardProps> = ({
           <img
             src={skin.imageUrl}
             alt={skin.skinName}
+            referrerPolicy="no-referrer"
             crossOrigin="anonymous"
             loading="lazy"
             onLoad={() => setImgLoaded(true)}

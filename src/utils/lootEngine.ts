@@ -19,6 +19,7 @@ const mythicSkins = ALL_SKINS.filter(
  * Pick random item from an array
  */
 function pickRandom<T>(items: T[]): T {
+  if (!items || items.length === 0) return ALL_SKINS[0] as unknown as T;
   return items[Math.floor(Math.random() * items.length)];
 }
 
