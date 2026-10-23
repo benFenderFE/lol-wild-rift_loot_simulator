@@ -71,27 +71,61 @@ export const RateInfoModal: React.FC<RateInfoModalProps> = ({
           <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
             <h4 className="font-bold text-cyan-300 text-sm mb-2 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-cyan-400" />
-              2. Skin Content Probability
+              {lang === "th"
+                ? "2. อัตราความน่าจะเป็นของสกิน"
+                : "2. Skin Content Probability"}
             </h4>
             <div className="grid grid-cols-2 gap-2 mb-3">
               <div className="p-2.5 rounded bg-slate-900 border border-slate-800">
                 <span className="text-slate-400 block">
-                  Permanent Skin Drop
+                  {lang === "th"
+                    ? "โอกาสได้สกินถาวร (Permanent)"
+                    : "Permanent Skin Drop"}
                 </span>
                 <span className="text-emerald-400 font-extrabold text-base">
                   5.00%
                 </span>
               </div>
               <div className="p-2.5 rounded bg-slate-900 border border-slate-800">
-                <span className="text-slate-400 block">Skin Shard Drop</span>
+                <span className="text-slate-400 block">
+                  {lang === "th"
+                    ? "โอกาสได้เศษสกิน (Skin Shard)"
+                    : "Skin Shard Drop"}
+                </span>
                 <span className="text-purple-400 font-extrabold text-base">
                   95.00%
                 </span>
               </div>
             </div>
-            <p className="text-[11px] text-slate-400">
-              *Tiers represented inside the eligible skin pool include Standard
-              (~35%), Epic (~50%), Legendary (~13%), and Mythic/Prestige (~2%).
+            <div className="space-y-1.5 text-[11px] text-slate-400">
+              <div className="font-semibold text-slate-300 mb-1">
+                {lang === "th"
+                  ? "สัดส่วนระดับความหายาก (Rarity Tiers):"
+                  : "Rarity Distribution:"}
+              </div>
+              <div className="flex justify-between py-1 px-2 rounded bg-slate-900">
+                <span>Standard (สกินทั่วไป)</span>
+                <span className="font-mono text-slate-200 font-bold">~71.00%</span>
+              </div>
+              <div className="flex justify-between py-1 px-2 rounded bg-slate-900">
+                <span className="text-teal-300">Epic (สกินเอปิก)</span>
+                <span className="font-mono text-teal-300 font-bold">~25.00%</span>
+              </div>
+              <div className="flex justify-between py-1 px-2 rounded bg-slate-900">
+                <span className="text-orange-400">Legendary (สกินเลเจนดารี)</span>
+                <span className="font-mono text-orange-400 font-bold">~3.50%</span>
+              </div>
+              <div className="flex justify-between py-1.5 px-2 rounded bg-amber-950/40 border border-amber-500/30 text-amber-300 font-bold">
+                <span>Mythic / Prestige Select (เพรสทีจ)</span>
+                <span className="font-mono text-yellow-300 text-right">
+                  0.0003% - 0.0006% / สกิน ({lang === "th" ? "การันตีรอบที่ 100" : "Pity pull #100"})
+                </span>
+              </div>
+            </div>
+            <p className="mt-2 text-[10px] text-slate-500 italic">
+              {lang === "th"
+                ? "*ในเกมจริงสกิน Prestige มีโอกาสสุ่มเจอตรงๆ น้อยมาก (~0.0003% - 0.0006% ต่อตัว) ผู้เล่นจะได้ผ่านระบบการันตีรอบที่ 100 (Pity) หรือสะสมอัญมณีสีส้มไปแลกในร้านค้า"
+                : "*In-game, Prestige skins have an extremely low direct pull rate (~0.0003% - 0.0006% per skin). They are primarily acquired via 100-pull Pity or Orange Gemstone store redemption."}
             </p>
           </div>
 

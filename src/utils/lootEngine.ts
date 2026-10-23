@@ -60,21 +60,32 @@ export function rollSkinContent(
       return { skin: pickRandom(mythicSkins), isPermanent: true };
     }
     const rand = Math.random() * 100;
-    if (rand < 0.5) {
+    if (rand < 0.005) {
+      // ~0.005% Featured Mythic/Prestige Permanent (~0.0003% - 0.0006% per individual skin, exactly as disclosed in-game)
       return { skin: pickRandom(mythicSkins), isPermanent: true };
     } else if (rand < 5.0) {
-      return {
-        skin: pickRandom([...legendarySkins, ...epicSkins]),
-        isPermanent: true,
-      };
+      // 4.995% Other Permanent Skin (0.5% Legendary, 2.2% Epic, 2.295% Standard)
+      const permRand = Math.random() * 4.995;
+      if (permRand < 0.5) {
+        return { skin: pickRandom(legendarySkins), isPermanent: true };
+      } else if (permRand < 2.7) {
+        return { skin: pickRandom(epicSkins), isPermanent: true };
+      } else {
+        return { skin: pickRandom(standardSkins), isPermanent: true };
+      }
     } else {
-      // Shards
+      // 95.0% Shards (Realistic Wild Rift drop distribution: mostly Standard, some Epic, rare Legendary)
       const shardRarityRand = Math.random() * 100;
-      if (shardRarityRand < 15)
+      if (shardRarityRand < 3.5) {
+        // 3.5% Legendary Shard
         return { skin: pickRandom(legendarySkins), isPermanent: false };
-      if (shardRarityRand < 65)
+      } else if (shardRarityRand < 3.5 + 25.0) {
+        // 25.0% Epic Shard
         return { skin: pickRandom(epicSkins), isPermanent: false };
-      return { skin: pickRandom(standardSkins), isPermanent: false };
+      } else {
+        // 71.5% Standard Shard
+        return { skin: pickRandom(standardSkins), isPermanent: false };
+      }
     }
   }
 
@@ -82,21 +93,21 @@ export function rollSkinContent(
   // 5% Permanent, 95% Shard
   const isPermanent = Math.random() < 0.05;
 
-  // Determine skin tier
+  // Determine skin tier (Calibrated to official Wild Rift & League Hextech rarity distribution)
   const tierRoll = Math.random() * 100;
   let skin: SkinItem;
 
-  if (tierRoll < 2.0) {
-    // 2% Mythic/Prestige
+  if (tierRoll < 0.005) {
+    // ~0.005% Mythic/Prestige (~0.0003% - 0.0006% per individual skin)
     skin = pickRandom(mythicSkins);
-  } else if (tierRoll < 2.0 + 13.0) {
-    // 13% Legendary
+  } else if (tierRoll < 0.005 + 3.5) {
+    // 3.5% Legendary
     skin = pickRandom(legendarySkins);
-  } else if (tierRoll < 2.0 + 13.0 + 50.0) {
-    // 50% Epic
+  } else if (tierRoll < 0.005 + 3.5 + 25.0) {
+    // 25.0% Epic
     skin = pickRandom(epicSkins);
   } else {
-    // 35% Standard
+    // 71.495% Standard
     skin = pickRandom(standardSkins);
   }
 
@@ -165,13 +176,13 @@ export function calculateLuckRating(stats: GachaStats): number {
   const avgOg = stats.orangeGemstonesTotal / stats.totalChestsOpened;
   const ogScore = (avgOg / 10.9) * 40; // 40 weight
 
-  // 3. High rarity hit component (expected legendary + mythic ~ 15%)
+  // 3. High rarity hit component (expected legendary + mythic ~ 4%)
   const highTierCount =
     stats.rarityCounts.legendary +
     stats.rarityCounts.mythic +
     stats.rarityCounts.prestige;
   const highTierRate = (highTierCount / stats.totalChestsOpened) * 100;
-  const rarityScore = (highTierRate / 15.0) * 20; // 20 weight
+  const rarityScore = (highTierRate / 4.0) * 20; // 20 weight
 
   // 4. Jackpot bonus
   const jackpotBonus = stats.jackpotCount * 25;
