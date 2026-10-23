@@ -25,7 +25,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://ddragon.leagueoflegends.com; media-src 'self' blob: data:; connect-src 'self' https://ddragon.leagueoflegends.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://wiki.leagueoflegends.com https://ddragon.leagueoflegends.com https://*.leagueoflegends.com https://*.riotgames.com; media-src 'self' blob: data:; connect-src 'self' https://wiki.leagueoflegends.com https://ddragon.leagueoflegends.com https://*.leagueoflegends.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         }
       ]
     }
