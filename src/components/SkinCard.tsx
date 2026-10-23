@@ -17,6 +17,7 @@ interface SkinCardProps {
   showDetails?: boolean;
   onClick?: () => void;
   selected?: boolean;
+  className?: string;
 }
 
 const RARITY_THEMES: Record<
@@ -86,6 +87,7 @@ export const SkinCard: React.FC<SkinCardProps> = ({
   showDetails = true,
   onClick,
   selected = false,
+  className = "",
 }) => {
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -94,16 +96,16 @@ export const SkinCard: React.FC<SkinCardProps> = ({
   const RoleIcon = ROLE_ICONS[skin.role] || Sparkles;
 
   const cardSizes = {
-    sm: "w-44 h-64 text-xs",
-    md: "w-56 h-80 text-sm",
-    lg: "w-64 h-96 text-base",
+    sm: "w-52 sm:w-56 h-76 sm:h-[320px] text-xs",
+    md: "w-60 sm:w-68 h-[360px] sm:h-[390px] text-sm",
+    lg: "w-68 sm:w-76 h-[410px] sm:h-[450px] text-base",
   };
 
   return (
     <div
       onClick={onClick}
       className={`relative rounded-xl border-2 overflow-hidden flex flex-col justify-between transition-all duration-300 select-none bg-slate-950 ${
-        cardSizes[size]
+        className || cardSizes[size]
       } ${theme.border} ${
         onClick ? "cursor-pointer hover:scale-105 hover:shadow-2xl" : ""
       } ${selected ? "ring-4 ring-amber-400 scale-105" : ""}`}
@@ -114,16 +116,17 @@ export const SkinCard: React.FC<SkinCardProps> = ({
           <img
             src={skin.imageUrl}
             alt={skin.skinName}
+            referrerPolicy="no-referrer"
             crossOrigin="anonymous"
             loading="lazy"
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
-            className={`w-full h-full object-cover object-top transition-all duration-700 ease-out ${
-              imgLoaded ? "scale-100 opacity-90" : "scale-105 opacity-0"
+            className={`w-full h-full object-cover object-[center_22%] transition-all duration-700 ease-out ${
+              imgLoaded ? "scale-100 opacity-100" : "scale-105 opacity-0"
             } group-hover:scale-105`}
           />
-          {/* Authentic Wild Rift cinematic gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-black/60 pointer-events-none" />
+          {/* Authentic Wild Rift cinematic gradient overlay: subtle top & bottom only */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/15 to-black/35 pointer-events-none" />
         </div>
       ) : (
         /* Fallback Vector Crest if offline/blocked */
@@ -177,42 +180,40 @@ export const SkinCard: React.FC<SkinCardProps> = ({
       )}
 
       {/* Bottom Info: Champion, Skin Title, Gemstones, Stardust */}
-      <div className="relative z-10 p-3 bg-gradient-to-t from-black via-slate-950/90 to-transparent border-t border-white/10 flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
+      <div className="relative z-10 p-3 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent border-t border-white/10 flex flex-col gap-1.5 backdrop-blur-[2px]">
+        <div className="flex items-center justify-between gap-1">
           <span className="text-xs text-amber-300 font-bold tracking-wider uppercase drop-shadow">
             {skin.champion}
           </span>
-          <span className="text-[10px] text-slate-300 flex items-center gap-1 drop-shadow">
+          <span className="text-[10px] text-slate-300 flex items-center gap-1 drop-shadow bg-black/50 px-1.5 py-0.5 rounded border border-white/10">
             <RoleIcon className="w-3 h-3 text-amber-400" />
             {skin.role}
           </span>
         </div>
 
         <h3
-          className="font-extrabold text-slate-100 text-xs sm:text-sm tracking-wide truncate drop-shadow-md"
+          className="font-black text-slate-100 text-sm sm:text-base tracking-wide drop-shadow-md line-clamp-1"
           title={skin.skinName}
         >
           {skin.skinName}
         </h3>
 
-        {/* Orange Gemstone Bundle Pill (when dropped) */}
-        {orangeGemstones !== undefined && (
-          <div className="mt-1 pt-1.5 border-t border-white/10 flex items-center justify-between text-xs">
-            <span className="text-amber-400 font-semibold text-[11px] flex items-center gap-1">
-              💎 Orange Gemstone
-            </span>
-            <span className="text-amber-300 font-black flex items-center gap-1 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/50 shadow-sm">
-              +{orangeGemstones}
-            </span>
-          </div>
-        )}
+        {/* Combined Gemstone & Disenchant Row to maximize artwork visibility */}
+        {(orangeGemstones !== undefined || showDetails) && (
+          <div className="mt-0.5 pt-1.5 border-t border-white/15 flex items-center justify-between gap-1 text-[11px]">
+            {orangeGemstones !== undefined ? (
+              <span className="text-amber-300 font-extrabold flex items-center gap-1 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/50 shadow-sm text-xs">
+                💎 +{orangeGemstones}
+              </span>
+            ) : (
+              <span className="text-slate-400 text-[10px]">Loot Drop</span>
+            )}
 
-        {showDetails && (
-          <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-white/10">
-            <span>Disenchant:</span>
-            <span className="text-sky-300 font-bold">
-              +{skin.disenchantYield} ✨
-            </span>
+            {showDetails && (
+              <span className="text-sky-300 font-semibold flex items-center gap-1 bg-sky-950/70 px-2 py-0.5 rounded border border-sky-400/30 text-[11px]">
+                +{skin.disenchantYield} ✨
+              </span>
+            )}
           </div>
         )}
       </div>

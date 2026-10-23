@@ -136,7 +136,7 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
       {/* Background radial rays */}
       <div className="absolute inset-0 bg-radial from-amber-500/10 via-cyan-950/20 to-transparent pointer-events-none" />
 
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-slate-900/95 border-2 border-amber-500/50 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.9)] p-4 sm:p-5 flex flex-col items-center my-auto overflow-hidden">
+      <div className="relative w-[96vw] max-w-6xl xl:max-w-7xl max-h-[92vh] bg-slate-900/95 border-2 border-amber-500/50 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.95)] p-4 sm:p-6 flex flex-col items-center my-auto overflow-hidden">
         {/* Top Gold Corner Accents */}
         <div className="absolute -top-1 -left-1 w-5 h-5 border-t-2 border-l-2 border-amber-300 rounded-tl-lg" />
         <div className="absolute -top-1 -right-1 w-5 h-5 border-t-2 border-r-2 border-amber-300 rounded-tr-lg" />
@@ -288,8 +288,8 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
           )}
         </div>
 
-        {/* Reward Cards Scrollable Container (laptop screen friendly height) */}
-        <div className="w-full flex-1 max-h-[46vh] overflow-y-auto px-2 py-2 flex flex-wrap items-center justify-center gap-3.5 scrollbar-thin scrollbar-thumb-amber-500/40">
+        {/* Reward Cards Scrollable Container */}
+        <div className="w-full flex-1 max-h-[55vh] overflow-y-auto px-2 sm:px-4 py-3 flex flex-wrap items-stretch justify-center gap-4 sm:gap-6 scrollbar-thin scrollbar-thumb-amber-500/40">
           {filteredDrops.length === 0 ? (
             <div className="py-12 text-center text-slate-500 text-xs">
               No items match this category filter.
@@ -298,14 +298,14 @@ export const OpeningModal: React.FC<OpeningModalProps> = ({
             filteredDrops.map((drop, idx) => (
               <div
                 key={`${drop.id}-${idx}`}
-                className="animate-[fadeInUp_0.3s_ease-out_forwards]"
-                style={{ animationDelay: `${Math.min(idx * 0.05, 0.4)}s` }}
+                className="animate-[fadeInUp_0.3s_ease-out_forwards] flex justify-center"
+                style={{ animationDelay: `${Math.min(idx * 0.04, 0.3)}s` }}
               >
                 <SkinCard
                   skin={drop.skin}
                   isPermanent={drop.isPermanent}
                   orangeGemstones={drop.orangeGemstones}
-                  size={drops.length > 5 ? "sm" : "md"}
+                  className="w-56 sm:w-64 h-[340px] sm:h-[370px]"
                   showDetails={true}
                 />
               </div>
